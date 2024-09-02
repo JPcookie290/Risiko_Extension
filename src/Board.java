@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO: rework for different maps, which have different territories and continents
 public class Board {
     private Map<String, Territory> territories;
     private Continent[] continents;

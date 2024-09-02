@@ -1,7 +1,11 @@
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -153,7 +157,7 @@ public class GUI {
     private void updateBoard() {
         boardPanel.removeAll();
         boardPanel.setLayout(null);
-        boardPanel.setBackground(Color.BLUE);
+        boardPanel.setBackground(new Color(175, 222, 234)); // change color for better view
         int rows = 4;
         int cols = 6;
         int buttonWidth = 120;
@@ -179,19 +183,41 @@ public class GUI {
                     continue;
                 }
 
-                JButton button = new JButton(territory.getName() + " (" + territory.getArmyCount() + ")");
-                button.setBackground(territory.getOwner() == currentPlayer ? Color.GREEN : Color.RED);
-                button.addActionListener(new ActionListener() {
+                // new addition change Button to JLabel for MacOS view
+                JLabel territoryLabel = new JLabel("<html>" + territory.getName() + "<br>Current Armies: " + territory.getArmyCount() + "</html>", SwingConstants.CENTER);
+                territoryLabel.setOpaque(true);
+
+                //TODO: rework for Player name and color addition
+                if(territory.getOwner().getName().contains("Player 1")){
+                    territoryLabel.setBackground(new Color(255, 216, 132));
+                } else if (territory.getOwner().getName().contains("Player 2")) {
+                    territoryLabel.setBackground(new Color(219, 138, 221));
+                } else {
+                    territoryLabel.setBackground(Color.gray);
+                }
+
+                territoryLabel.setBorder( new LineBorder(territory.getOwner() == currentPlayer ? new Color(106, 181, 79) :  new Color(163, 24, 45), 3));
+                territoryLabel.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
-                        handleTerritoryClick(territory);
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getButton() == MouseEvent.BUTTON1){
+                            handleTerritoryClick(territory);
+                        }
+                        // add right mouse click to display adjacent territories
+                        if (e.getButton() == MouseEvent.BUTTON3 && territory.getOwner() == currentPlayer){
+                            JOptionPane.showMessageDialog(frame, showAdjacentTerritories(territory));
+                        } else {
+                            JOptionPane.showMessageDialog(frame, "This is not your territory!");
+                        }
                     }
                 });
+                // previous Code removed since it changed from ActionListener to MouseAdapter
+
                 int xPosition = groupX + (i % 3) * (buttonWidth + padding);
                 int yPosition = groupY + (i / 3) * (buttonHeight + padding);
 
-                button.setBounds(xPosition, yPosition, buttonWidth, buttonHeight);
-                boardPanel.add(button);
+                territoryLabel.setBounds(xPosition, yPosition, buttonWidth, buttonHeight);
+                boardPanel.add(territoryLabel);
 
             }
         }
@@ -200,6 +226,19 @@ public class GUI {
                 " | Cards: " + currentPlayer.getCards().size());
         boardPanel.revalidate();
         boardPanel.repaint();
+    }
+
+    // addition function to display adjacent territories
+    private ArrayList<String> showAdjacentTerritories(Territory territory){
+        ArrayList<String> display = new ArrayList<>();
+        territory.getAdjacentTerritories().forEach((adjacent) -> {
+            if (territory.getOwner() != adjacent.getOwner()){
+                display.add("attack: " + adjacent.getName());
+            } else {
+                display.add("fortify: " + adjacent.getName());
+            }
+        });
+        return display;
     }
 
     private void handleTerritoryClick(Territory clickedTerritory) {

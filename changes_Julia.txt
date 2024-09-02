@@ -1,0 +1,13 @@
+* Status 02.09
+To implement:
+TODO: create a map class, three different map possibilities, all have different continents & territories (Ideas: Zamonien, Tamriel, World/Basic)
+TODO: need to add a check for placing armies, distributing armies
+TODO: add a beginning dialog to pick map, player amount and players pick their own colors
+TODO: add different cards to pick, check attack function (currently always losing)
+TODO: highlight in attack/fortify function available territories
+TODO: create an active territory for the ability to change the current territory for the attack/fortifying
+
+Colors_URL: https://coolors.co/f6bd60-03635a-929787
+
+Current changes:
+* change buttons to labels to enable a color change on MacOS
