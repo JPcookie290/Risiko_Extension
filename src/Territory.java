@@ -6,14 +6,18 @@ public class Territory {
     private Player owner;
     private int armyCount;
     private final List<Territory> adjacentTerritories;
-    private boolean neutrality; // new addition
+    // new additions
+    private String assignedContinent;
+    private boolean neutrality;
 
-    public Territory(String name) {
+    public Territory(String name, String assignedContinent) {
         this.name = name;
         this.owner = null;
         this.armyCount = 0;
         this.adjacentTerritories = new ArrayList<>();
-        this.neutrality = getNeutrality(); // new addition
+        // new additions
+        this.neutrality = getNeutrality();
+        this.assignedContinent = assignedContinent;
     }
 
     public String getName() {
@@ -24,10 +28,26 @@ public class Territory {
         return name;
     }
 
-    // new addition
+    // new additions
     public boolean getNeutrality(){
         return this.owner == null;
     }
+
+    public void removeOwner(Player owner) {
+        if (armyCount == 0){
+            setOwner(null);
+        }
+    }
+
+    public void setAssignedContinent(String continent){
+        this.assignedContinent = continent;
+    }
+
+    public String getAssignedContinent() {
+        return assignedContinent;
+    }
+
+    // end new additions
 
     public Player getOwner() {
         return owner;
@@ -35,13 +55,6 @@ public class Territory {
 
     public void setOwner(Player owner) {
         this.owner = owner;
-    }
-
-    // new addition
-    public void removeOwner(Player owner) {
-        if (armyCount == 0){
-            setOwner(null);
-        }
     }
 
     public int getArmyCount() {

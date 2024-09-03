@@ -8,7 +8,7 @@ public class Main {
             players[i] = new Player(PLAYER_NAMES[i]);
         }
 
-        Game game = new Game(players);
+        Game game = new Game(players, "test");
         GUI gui = new GUI(game);
         javax.swing.SwingUtilities.invokeLater(gui::createAndShowGUI);
     }

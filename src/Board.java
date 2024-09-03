@@ -1,29 +1,30 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //TODO: rework for different maps, which have different territories and continents
 public class Board {
     private Map<String, Territory> territories;
-    private Continent[] continents;
+    private List<Continent> continents; //changed to List
 
     public Board() {
-        territories = new HashMap<>();
-        continents = new Continent[4];
+        this.territories = new HashMap<>();
+        this.continents = new ArrayList<>();
+    }
 
-        for (int i = 0; i < 24; i++) {
-            territories.put("Territory " + (i + 1), new Territory("Territory " + (i + 1)));
-        }
-
-        for (int i = 0; i < 4; i++) {
-            continents[i] = new Continent("Continent " + (i + 1));
-            for (int j = 0; j < 6; j++) {
-                Territory territory = territories.get("Territory " + (i * 6 + j + 1));
-                continents[i].addTerritory(territory);
-            }
-            setAdjacentTerritories();
+    public void createContinents(String[] list){
+        for (String continent : list){
+            this.getContinents().add(new Continent(continent));
         }
     }
 
+    public void createTerritoriesForContinent(String name, String continentName){
+            territories.put(continentName, new Territory(name, continentName));
+    }
+
+
+    //TODO rework to include different map choices
     private void setAdjacentTerritories() {
         // Territory 1
         territories.get("Territory 1").addAdjacentTerritory(territories.get("Territory 2"));
@@ -159,7 +160,16 @@ public class Board {
         return territories;
     }
 
-    public Continent[] getContinents() {
+    public List<Continent> getContinents() {
         return continents;
+    }
+
+    public Continent getContinent(String name) {
+        for (Continent continent : continents ){
+            if (name.equals(continent.getName())){
+                return continent;
+            }
+        }
+        return null;
     }
 }

@@ -8,20 +8,53 @@ public class Game {
     private final Map<Player, List<Card>> playerCards;
     private boolean isDistributing;
     private int armiesToDistribute;
+    // new addition
+    private int round;
+    private String[] mapChoices;
 
-    public Game(Player[] players) {
+    public Game(Player[] players, String choice) {
         this.players = players;
-        this.board = new Board();
+        //this.board = new Board(choice);
+        this.mapChoices = new String[]{"World", "Zamonien", "Tamriel"};
         this.currentPlayerIndex = 0;
         this.random = new Random();
         this.playerCards = new HashMap<>();
        // Scanner scanner = new Scanner(System.in);
         this.isDistributing = false;
-        this.armiesToDistribute = 16;
+        // new addition
+        this.armiesToDistribute = calculateArmiesToDistribute();
+        this.round = 0;
+
+        if (choice.contains("Zamonien")){
+            this.board = new BoardZamonien();
+        } else if (choice.contains("Tamriel")) {
+            this.board = new BoardTamriel();
+        } else {
+            this.board = new BoardWorld();
+        }
+
         initializeGame();
     }
 
+    // new addition
+    private int calculateArmiesToDistribute(){
+        int totalArmies = 0;
+        for (Player player : players) {
+            totalArmies += player.getArmyCount();
+        }
+        return totalArmies;
+    }
+
+    public int getArmiesToDistribute() { return armiesToDistribute; }
+
+    public void decreaseArmiesToDistribute(int armies) {
+        getCurrentPlayer().decreaseArmyCount(armies);
+        calculateArmiesToDistribute();
+    }
+
     private void initializeGame() {
+        round++;
+
         for (Player player : players) {
             playerCards.put(player, new ArrayList<>());
         }
@@ -95,6 +128,12 @@ public class Game {
             fortifyPhase();
             setCurrentPlayer();
             checkGameOver();
+        }
+        // new addition
+        //TODO: rework when names are edited for index based
+        if (getCurrentPlayer().getName().contains("Player 2")) {
+            round++;
+            System.out.println(round);
         }
     }
 public void setCurrentPlayer(){
@@ -234,4 +273,7 @@ public void setCurrentPlayer(){
             System.out.println("Game Over! " + winner.getName() + " wins!");
         }
     }
+
+    //new addition
+    public int getRound(){ return round; }
 }

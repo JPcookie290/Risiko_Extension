@@ -6,6 +6,7 @@ TODO: add a beginning dialog to pick map, player amount and players pick their o
 TODO: add different cards to pick, check attack function (currently always losing)
 TODO: highlight in attack/fortify function available territories
 TODO: create an active territory for the ability to change the current territory for the attack/fortifying
+TODO: remove bug in distribution, remove button
 
 Colors_URL: https://coolors.co/f6bd60-03635a-929787
 

@@ -1,0 +1,75 @@
+Projekt - Risiko erweitern
+Abschlussbedingungen
+Hinweis: Verwenden Sie Ihre Ausarbeitung zu dieser Aufgabe NICHT für Ihr Portfolio, da das Basisprogramm von einer anderen Person stammt.
+
+Sie erhalten eine Ausarbeitung des Risiko Projektes mit den Basisvorgaben. Erweitern Sie das Risiko Spiel, um folgende Punkte:
+
+Es kann zwischen 2 bis 4 Spielenden ausgewählt werden.
+Die Spieler:innen können aus einer Reihe an vorgegebenen Farben Ihre Farbe auswählen. Natürlich dürfen keine zwei Spieler dieselbe Farbe verwenden.
+Diese Spielerfarbe soll im User Interface sinnvoll eingesetzt werden falls dies nicht bereits getan wird.
+Die Anzahl der Armee pro Spieler:in bei Spielbeginn variiert je Spieleranzahl:
+2 Spieler = 20 Armeeeinheiten
+3 Spieler = 25 Armeeeinheiten
+4 Spieler = 30 Armeeeinheiten
+Es kann zu Beginn zwischen mindestens drei unterschiedlichen Karten ausgewählt werden. Falls bereits mehrere Karten vorhanden sind,
+erstellen Sie mindestens noch zwei weitere neue Karten. Diese neuen Karten unterscheiden sich mindestens in der Nachbarschaft der Territorien,
+Anzahl der Territorien (mind. 24) gesamt und je Kontinent und eventuell Anzahl der Kontinente.
+Die Kontinente besitzen eine unterschiedliche Anzahl an Territorien ausgenommen der Standardkarte.
+Benennen Sie die Kontinente sowie Territorien und zeigen Sie diese Namen an einem geeigneten Ort an, sodass Spielende die Kontinente
+und Territorien identifizieren können. Sie können dabei Orte der realen Weltkarte verwenden oder sich auf Sci/Fi oder Fantasy Karten/Bezeichnungen beziehen.
+Die Territorien werden bei Spielbeginn gleichmäßig aufgeteilt (Beispiel: 24 Territorien = 2 Spieler je 12, 3 Spieler je 8 oder 4 Spieler
+ je 6). Sollte bei einer Karte keine vollständig gleichmäßige Aufteilung möglich sein, da die Anzahl der Territorien nicht durch 2, 3
+ und/oder 4 restlos geteilt werden kann, dann werden soweit möglich alle aufgeteilt und die übrigen Territorien als neutral/unbesetzt gekennzeichnet.
+Es können auch Truppen vollständig von einem Gebiet abgezogen werden. Dann wird dieses "aufgegeben" und das Territorium wird als neutral gekennzeichnet.
+Neutrale Territorien können angegriffen und erobert werden. Deren Verteidigung besteht immer aus einem Würfel (als würde sich dort eine Armee befinden)
+mit einem Maximal-Augenwurf von 2. Es ist also möglich, dass die Eroberung eines neutralen Gebietes scheitert.
+Die Verstärkungskarten werden erweitert. Zunächst werden die beiden Varianten Kavallerie und Artillerie ergänzt.
+Bei der Eroberung eines Territorium erhält man zufällig eine Karte. Es können nur drei Karten der gleichen Art (z.B.: 3x Artillerie)
+oder drei Karten bestehen aus je einer Art (1x Infanterie, 1x Kavallerie, 1x Artillerie) eingetauscht werden. Wenn man drei passende Karten hat,
+können diese gegen Armeeeinheiten getauscht werden. Es dürfen weiterhin nicht mehr als 5 Karten im Besitz des/der Spielenden sein.
+3x Infanterie = 4 Einheiten
+3x Kavallerie = 5 Einheiten
+3x Artillerie = 6 Einheiten
+je 1 Symbol = 5 Einheiten
+Führen Sie unterschiedliche Gewinnbedingungen ein. Jede/r Spielende erhält bei Beginn des Spiels eine Gewinnbedingung, die zu erfüllen ist.
+Diese kann entweder unterschiedlich oder für alle gleich sein je nach Karte, Spieleranzahl etc.
+erobere x Territorien
+erobere x Kontinente
+erobere Territorien x,y,z,... (diese Aufgabe sollte nicht gleich für alle sein, sondern in den Territorien unterschiedlich jedoch gerne überschneidend,
+um zu erschweren, dass Personen bereits zu Beginn das Spiel beenden)
+erobere Kontinent x und die Territorien x,y,... (diese Aufgabe sollte nicht für alle gleich sein, kann sich aber in den Kontinenten und/oder
+Territorien überschneiden)
+erobere Territorien, sodass eine ununterbrochene Ost-West/Nord-Süd Verbindung besteht
+Kennzeichnen Sie im Programm klar Ihre Ergänzungen und Anpassungen.
+Die folgenden Punkte sollte Ihr Basisprojekt zur Erweiterung bereits mindestens beinhalten:
+
+Spielbrett:
+Das vereinfachte Spielbrett besteht aus einer Karte, die in 24 Territorien, aufgeteilt in 4 Kontinente zu je 6 Territorien besteht.
+Startaufstellung:
+Jede:r Spieler:in erhält zu Beginn 12 Territorien. Diese werden abwechselnd ausgewählt.
+Jede:r Spieler:in platziert dann 20 Armeen auf seine Territorien. Die Aufteilung der Armeen bleibt dem/der Spieler:in überlassen.
+Karten:
+Es gibt nur eine Art von Karten, die Infanteriekarten. Diese werden zur Verstärkung verwendet.
+Spielphasen:
+Verstärkungsphase:
+Ein/e Spieler:in erhält neue Armeen basierend auf der Anzahl der kontrollierten Territorien (Anzahl der Territorien durch 3, abgerundet,
+mit einem Minimum von 3 Armeen).
+Zusätzlich erhält ein/e Spieler:in 3 Armeen für den Besitz eines vollständigen Kontinents.
+Kartenverstärkung:
+Für je 3 Infanteriekarten kann ein/e Spieler:in zusätzliche 5 Armeen eintauschen.
+Angriffsphase:
+Ein/e Spieler:in kann von einem seiner/ihrer Territorien aus ein angrenzendes gegnerisches Territorium angreifen.
+Der/Die Angreifer:in kann maximal 3 Armeen angreifen lassen, der/die Verteidiger:in kann maximal 2 Armeen verteidigen.
+Würfeln:
+Der/Die Angreifer:in würfelt mit einem Würfel pro Armee (maximal 3).
+Der/Die Verteidiger:in würfelt mit einem Würfel pro Armee (maximal 2).
+Die höchsten Würfelwerte werden verglichen, und der niedrigere Wert führt zum Verlust einer Armee (bei Gleichstand verliert der/die Angreifer:in).
+Fortifizierungsphase:
+Ein/e Spieler:in kann Armeen von einem seiner/ihrer Territorien auf ein angrenzendes eigenes Territorium verschieben.
+Es darf aber nur eine Verschiebung pro Runde stattfinden. Die Anzahl der Armeeeinheiten, die verschoben wird ist frei wählbar, aber nur eine Truppenbewegung ist erlaubt.
+Karten erhalten:
+Nach jedem gewonnenen Kampf (Eroberung eines Territoriums) erhält der/die Spieler:in eine Infanteriekarte.
+Ein/e Spieler:in kann maximal 5 Karten auf der Hand haben. Wenn ein/e Spieler:in mehr als 5 Karten hat,
+muss er/sie eine Karte einlösen und die zusätzlichen Armeen platzieren.
+Ziel des Spiels:
+Die Person, die zuerst alle Territorien kontrolliert, gewinnt das Spiel.

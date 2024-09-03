@@ -11,8 +11,13 @@ public class Player {
     public Player(String name) {
         this.name = name;
         this.territories = new ArrayList<>();
-        this.armyCount = 0;
+        this.armyCount = 8; //TODO: change later for player amount
         this.cards = new ArrayList<>();
+    }
+
+    //new addition
+    public void decreaseArmyCount(int armies) {
+        armyCount -= armies;
     }
 
     public String getName() {
