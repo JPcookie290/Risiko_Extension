@@ -12,3 +12,4 @@ Colors_URL: https://coolors.co/f6bd60-03635a-929787
 
 Current changes:
 * change buttons to labels to enable a color change on MacOS
+* add new Class files for the possibility of three different maps

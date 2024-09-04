@@ -14,8 +14,9 @@ public class Game {
 
     public Game(Player[] players, String choice) {
         this.players = players;
+        //addition to add different maps
         //this.board = new Board(choice);
-        this.mapChoices = new String[]{"World", "Zamonien", "Tamriel"};
+        this.mapChoices = new String[]{"Eteadrodia", "Zamonien", "Tamriel"};
         this.currentPlayerIndex = 0;
         this.random = new Random();
         this.playerCards = new HashMap<>();
@@ -30,9 +31,10 @@ public class Game {
         } else if (choice.contains("Tamriel")) {
             this.board = new BoardTamriel();
         } else {
-            this.board = new BoardWorld();
+            this.board = new BoardFantasyWorld();
         }
 
+         //this.board.outputControl(); // -> to delete
         initializeGame();
     }
 
@@ -58,7 +60,7 @@ public class Game {
         for (Player player : players) {
             playerCards.put(player, new ArrayList<>());
         }
-        List<Territory> allTerritories = new ArrayList<>(board.getTerritories().values());
+        List<Territory> allTerritories = new ArrayList<>(board.getTerritories());
         Collections.shuffle(allTerritories);
 
         for (int i = 0; i < allTerritories.size(); i++) {
@@ -75,6 +77,7 @@ public class Game {
             allCards.add(new Card("Infantry"));
         }
         Collections.shuffle(allCards);
+
     }
 
     public Player[] getPlayers() {
@@ -140,7 +143,7 @@ public void setCurrentPlayer(){
     currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
 }
     public boolean checkWinCondition() {
-        for (Territory territory : board.getTerritories().values()) {
+        for (Territory territory : board.getTerritories()) {
             if (territory.getOwner() != getCurrentPlayer()) {
                 return false;
             }

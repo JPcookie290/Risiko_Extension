@@ -207,8 +207,9 @@ public class GUI {
             int groupX = startX + (group % 2) * (6 *(padding ) + groupSpacing + (padding *2 ));
             int groupY = startY + (group / 2) * (3 * (padding) + groupSpacing);
 
+            //TODO check stream()
             for (int i = 0; i < 6; i++) {
-                Territory territory = game.getBoard().getTerritories().values().stream()
+                /*Territory territory = game.getBoard().getTerritories().values().stream()
                         .skip(territoryIndex++)
                         .findFirst()
                         .orElse(null);
@@ -255,7 +256,7 @@ public class GUI {
 
                 territoryLabel.setBounds(xPosition, yPosition, buttonWidth, buttonHeight);
                 boardPanel.add(territoryLabel);
-
+                */
             }
         }
         statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName() +

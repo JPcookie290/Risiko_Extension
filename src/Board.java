@@ -5,12 +5,24 @@ import java.util.Map;
 
 //TODO: rework for different maps, which have different territories and continents
 public class Board {
-    private Map<String, Territory> territories;
+    // addition change territories to a list
+    private List<Territory> territories;
     private List<Continent> continents; //changed to List
+    private String worldName;
 
     public Board() {
-        this.territories = new HashMap<>();
+        this.worldName = null;
+        this.territories = new ArrayList<>();
         this.continents = new ArrayList<>();
+
+    }
+
+    public void setWorldName(String name) {
+        this.worldName = name;
+    }
+
+    public String getWorldName() {
+        return worldName;
     }
 
     public void createContinents(String[] list){
@@ -19,13 +31,15 @@ public class Board {
         }
     }
 
-    public void createTerritoriesForContinent(String name, String continentName){
-            territories.put(continentName, new Territory(name, continentName));
+    //testing
+    public void testMapAndContinents(){
+        System.out.println(this.continents);
+        System.out.println(this.territories);
     }
 
 
     //TODO rework to include different map choices
-    private void setAdjacentTerritories() {
+    /*private void setAdjacentTerritories() {
         // Territory 1
         territories.get("Territory 1").addAdjacentTerritory(territories.get("Territory 2"));
         territories.get("Territory 1").addAdjacentTerritory(territories.get("Territory 7"));
@@ -150,18 +164,34 @@ public class Board {
         territories.get("Territory 24").addAdjacentTerritory(territories.get("Territory 18"));
         territories.get("Territory 24").addAdjacentTerritory(territories.get("Territory 23"));
     }
-
+    */
 
     public Territory getTerritory(String name) {
-        return territories.get(name);
+        for (Territory territory : territories ){
+            if (name.equals(territory.getName())){
+                return territory;
+            }
+        }
+        return null;
     }
 
-    public Map<String, Territory> getTerritories() {
+    public void setAdjacentTerritories(String territoryName, String[] territoryList){
+        for (String adjTerritory : territoryList){
+            getTerritory(territoryName).addAdjacentTerritory(getTerritory(adjTerritory));
+        }
+    }
+
+    public List<Territory> getTerritories() {
         return territories;
     }
 
     public List<Continent> getContinents() {
         return continents;
+    }
+
+    // new addition
+    public void addTerritory(Territory territory){
+        territories.add(territory);
     }
 
     public Continent getContinent(String name) {
@@ -171,5 +201,26 @@ public class Board {
             }
         }
         return null;
+    }
+
+    // for testing purposes
+    public void outputControl() {
+        for (Continent continent : continents) {
+            int num = 1;
+            System.out.println();
+            System.out.println("The " + continent.getName() + " region has these territories:");
+            for (Territory territory : continent.getTerritories()){
+                System.out.println(String.valueOf(num) + ". " + territory);
+
+                if (! territory.getAdjacentTerritories().isEmpty()){
+                    System.out.println("The adjacent territories:");
+                    for (Territory adjTerritory : territory.getAdjacentTerritories()){
+                        System.out.print(adjTerritory + ", ");
+                    }
+                    System.out.println();
+                }
+                num++;
+            }
+        }
     }
 }

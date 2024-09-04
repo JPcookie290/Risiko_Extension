@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+// TODO: add change if player has the whole continent
 public class Player {
     private final String name;
     private final List<Territory> territories;
@@ -60,5 +61,22 @@ public class Player {
 
     public boolean controlsContinent(Continent continent) {
         return new HashSet<>(territories).containsAll(continent.getTerritories());
+    }
+
+    // testing output
+
+    public void printPlayerInfo(){
+        int num = 1;
+        System.out.println("Player name: " + name);
+        System.out.println("Current armies: " + armyCount);
+        System.out.println("Currently owned territories: ");
+        for (Territory territory : territories){
+            System.out.print(num + ". " + territory.getName() + "(Continent: " + territory.getAssignedContinent() + ")");
+        }
+        System.out.println();
+        System.out.println("Current Cards");
+        for (Card card : cards){
+            System.out.print(card.getType());
+        }
     }
 }
