@@ -34,7 +34,7 @@ public class Game {
             this.board = new BoardFantasyWorld();
         }
 
-         //this.board.outputControl(); // -> to delete
+         this.board.outputControl(); // -> to delete
         initializeGame();
     }
 
