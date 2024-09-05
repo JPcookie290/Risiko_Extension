@@ -1,15 +1,47 @@
+import javax.swing.*;
+
+
+
 public class Main {
-    private static final int NUM_PLAYERS = 2;
-    private static final String[] PLAYER_NAMES = {"Player 1", "Player 2"};
+    /*
+    public static void main(String[] args) {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            JFrame startFrame = new JFrame("Start Screen");
+            startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            startFrame.setSize(400, 300);
+
+            Start startScreen = new Start((playerNames, selectedMap, numPlayers) -> {
+                Game game = new Game(playerNames, selectedMap, numPlayers);
+                GUI gui = new GUI(game);
+                SwingUtilities.invokeLater(gui::createAndShowGUI);
+                startFrame.dispose();
+            });
+
+            startFrame.add(startScreen.getMainPanel());
+            startFrame.setVisible(true);
+        });
+    }
+
+    private static void startGame(String[] playerNames, String selectedMap, int numPlayers) {
+        Game game = new Game(playerNames, selectedMap, numPlayers);
+        GUI gui = new GUI(game);
+        javax.swing.SwingUtilities.invokeLater(gui::createAndShowGUI);
+    }
+    */
+
 
     public static void main(String[] args) {
-        Player[] players = new Player[NUM_PLAYERS];
-        for (int i = 0; i < NUM_PLAYERS; i++) {
-            players[i] = new Player(PLAYER_NAMES[i]);
-        }
+        JFrame frame = new JFrame("Test Frame");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
 
-        Game game = new Game(players, "Fantasy World");
-        //GUI gui = new GUI(game);
-        //javax.swing.SwingUtilities.invokeLater(gui::createAndShowGUI);
+        Start startScreen = new Start();
+
+        if (startScreen.getMainPanel() == null) {
+            System.out.println("Error: mainPanel is null.");
+        } else {
+            frame.add(startScreen.getMainPanel());
+            frame.setVisible(true);
+        }
     }
 }

@@ -42,7 +42,7 @@ public class GUI {
 
     public void createAndShowGUI() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(900, 800);
+        frame.setSize(950, 800);
         frame.setLayout(new BorderLayout());
 
         boardPanel.setLayout(new GridLayout(4, 6));
@@ -192,10 +192,12 @@ public class GUI {
         boardPanel.removeAll();
         boardPanel.setLayout(null);
         boardPanel.setBackground(new Color(175, 222, 234)); // change color for better view
+
+        //TODO rework layout
         int rows = 4;
         int cols = 6;
-        int buttonWidth = 120;
-        int buttonHeight = 60;
+        int buttonWidth = 135;
+        int buttonHeight = 85;
         int padding = 20;
         int groupSpacing = 300;
         int startX = 20;
@@ -218,6 +220,7 @@ public class GUI {
                 if (territory == null) {
                     continue;
                 }*/
+
             for (int i = 0; i < 6; i++) {
                 if (territoryIndex >= territories.size()) {
                     break;

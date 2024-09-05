@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,12 +9,14 @@ public class Player {
     private final List<Territory> territories;
     private int armyCount;
     private List<Card> cards;
+    private Color color;
 
     public Player(String name) {
         this.name = name;
         this.territories = new ArrayList<>();
         this.armyCount = 8; //TODO: change later for player amount
         this.cards = new ArrayList<>();
+        //this.color = color;
     }
 
     //new addition

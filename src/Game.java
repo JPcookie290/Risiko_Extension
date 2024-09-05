@@ -1,4 +1,6 @@
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Game {
     private final Board board;
@@ -10,14 +12,22 @@ public class Game {
     private int armiesToDistribute;
     // new addition
     private int round;
-    private String[] mapChoices;
+    private Color[] playerColors;
 
-    public Game(Player[] players, String choice) {
-        this.players = players;
-        //addition to add different maps
-        //this.board = new Board(choice);
+    public Game(String[] playerNames, String selectedMap, int numPlayers) {
+        players = new Player[numPlayers];
+        for (int i = 0; i < numPlayers; i++) {
+            players[i] = new Player(playerNames[i]);
+        }
 
-        this.mapChoices = new String[]{"Eteadrodia", "Zamonien", "Tamriel"}; //TODO add to Start Screen
+        if (selectedMap.equals("Map 1")) {
+            this.board = new BoardFantasyWorld();
+        } else if (selectedMap.equals("Map 2")) {
+            this.board = new BoardZamonien();
+        } else {
+            this.board = new BoardTamriel();
+        }
+
         this.currentPlayerIndex = 0;
         this.random = new Random();
         this.playerCards = new HashMap<>();
@@ -27,13 +37,6 @@ public class Game {
         this.armiesToDistribute = calculateArmiesToDistribute();
         this.round = 0;
 
-        if (choice.contains("Zamonien")){
-            this.board = new BoardZamonien();
-        } else if (choice.contains("Tamriel")) {
-            this.board = new BoardTamriel();
-        } else {
-            this.board = new BoardFantasyWorld();
-        }
 
          this.board.outputControl(); // -> to delete
         initializeGame();
@@ -73,6 +76,8 @@ public class Game {
             System.out.println("Territory " + territory.getName() + " assigned to " + player.getName());
         }
 
+
+        //TODO: add different cards
         List<Card> allCards = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
             allCards.add(new Card("Infantry"));
