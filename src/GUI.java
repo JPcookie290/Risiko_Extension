@@ -140,7 +140,7 @@ public class GUI {
         return nextTurnButton;
     }
 
-    //TODO: change function to eliminate bug
+    //eliminated distribution bug
     private void distributeArmies() {
 
         while (game.getArmiesToDistribute() > 0) {
@@ -202,21 +202,28 @@ public class GUI {
         int startY = 20;
 
         Player currentPlayer = game.getCurrentPlayer();
+        List<Territory> territories = game.getBoard().getTerritories(); // addition ad territory list
         int territoryIndex = 0;
         for (int group = 0; group <4; group++){
             int groupX = startX + (group % 2) * (6 *(padding ) + groupSpacing + (padding *2 ));
             int groupY = startY + (group / 2) * (3 * (padding) + groupSpacing);
 
-            //TODO check stream()
-            for (int i = 0; i < 6; i++) {
-                /*Territory territory = game.getBoard().getTerritories().values().stream()
+            //TODO rework because I changed the HashMap to an ArrayList/List
+            /*for (int i = 0; i < 6; i++) {
+                Territory territory = game.getBoard().getTerritories().values().stream()
                         .skip(territoryIndex++)
                         .findFirst()
                         .orElse(null);
 
                 if (territory == null) {
                     continue;
+                }*/
+            for (int i = 0; i < 6; i++) {
+                if (territoryIndex >= territories.size()) {
+                    break;
                 }
+
+                Territory territory = territories.get(territoryIndex++);
 
                 // new addition change Button to JLabel for MacOS view
                 JLabel territoryLabel = new JLabel("<html>" + territory.getName() + "<br>" + territory.getAssignedContinent() +
@@ -256,7 +263,7 @@ public class GUI {
 
                 territoryLabel.setBounds(xPosition, yPosition, buttonWidth, buttonHeight);
                 boardPanel.add(territoryLabel);
-                */
+
             }
         }
         statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName() +
