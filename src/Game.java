@@ -16,7 +16,8 @@ public class Game {
         this.players = players;
         //addition to add different maps
         //this.board = new Board(choice);
-        this.mapChoices = new String[]{"Eteadrodia", "Zamonien", "Tamriel"};
+
+        this.mapChoices = new String[]{"Eteadrodia", "Zamonien", "Tamriel"}; //TODO add to Start Screen
         this.currentPlayerIndex = 0;
         this.random = new Random();
         this.playerCards = new HashMap<>();
