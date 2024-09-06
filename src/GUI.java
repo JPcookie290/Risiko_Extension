@@ -45,7 +45,7 @@ public class GUI {
         frame.setSize(950, 800);
         frame.setLayout(new BorderLayout());
 
-        boardPanel.setLayout(new GridLayout(4, 6));
+        boardPanel.setLayout(new GridLayout(15, 20));
         updateBoard();
 
         frame.add(boardPanel, BorderLayout.CENTER);

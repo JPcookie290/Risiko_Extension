@@ -1,12 +1,22 @@
 public class BoardFantasyWorld extends Board{
+    private String[][] layout;
 
     public BoardFantasyWorld() {
         super();
+
         this.setWorldName("Eteadrodia");
         String[] list = new String[]{"Framish Empire", "Commonwealth of Poruntas", "Dominion of Watchhaim", "Diru"};
         createContinents(list);
         createTerritories();
         setAllAdjacentTerritories();
+        this.layout = new String[][]{
+                {"", "", "", "GYJ", "N", "N", "N", "", "", "", "", "", "SD", "SD", "SD", "AM", "G", "G", "G", "G"},
+                {"", "", "", "GYJ", "N", "N", "N", "TU", "", "", "SD", "SD", "SD", "SD", "SD", "AM", "AM", "G", "G", "G"},
+                {"GYJ", "", "GYJ", "GYJ", "GYJ", "N", "N", "TU", "TU", "MI", "MI", "SD", "SD", "H", "H", "AM", "AM", "G", "G", "G"},
+                {"GYJ", "GYJ", "GYJ", "GYJ", "GYJ", "TI", "TU", "TU", "TU", "MI", "MI", "MI", "H", "H", "H", "AM", "AM", "AM", "LT", "LT"},
+                {"V", "GYJ", "ME", "ME", "NE", "TI", "TI", "TU", "TI", "TI", "MI", "MI", "H", "H", "H", "AM", "AM", "AM", "LT", "LT"},
+
+        };
     }
 
     // creates and adds territories to the continents
