@@ -6,32 +6,35 @@ import java.awt.event.ActionListener;
 public class StartUI extends JFrame {
 
     private JPanel mainPanel;
-    private ButtonGroup playerButtonGroup;
-    private JRadioButton twoPlayersButton, threePlayersButton, fourPlayersButton;
-    private JPanel playerInputPanel;
     private JTextField[] playerNameFields;
-    private JPanel[] colorSelectionPanels;
-    private JLabel[][] colorLabelsForPlayers;
-    private Color[] preselectedColors = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.MAGENTA};
-    private ButtonGroup mapButtonGroup;
+    private Color[] selectedColors;
+    private JRadioButton twoPlayersButton, threePlayersButton, fourPlayersButton;
     private JRadioButton fantasyWorldButton, zamonienButton, tamrielButton;
-    private JButton startButton;
+    private StartUIListener listener;
+    private JLabel[][] colorLabelsForPlayers;
+    private boolean[] isColorChosen;
+    private Color[] preselectedColors = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.MAGENTA};
+    private JPanel playerInputPanel;
+    private JPanel mapPanel;
+    private int[] previousColorIndex;
 
-    public StartUI() {
+    // Initialize StartUI
+    public StartUI(StartUIListener listener) {
+        this.listener = listener;
         setTitle("Start Screen");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
         setLayout(new BorderLayout());
 
         mainPanel = new JPanel();
-        mainPanel.setLayout(new GridLayout(3, 1));
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setAlignmentX(Component.CENTER_ALIGNMENT);  // Center the main panel
 
-        // Player selection panel with horizontal layout
-        JPanel playerPanel = new JPanel();
-        playerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));  // Horizontal layout
-        playerPanel.setBorder(BorderFactory.createTitledBorder("Select Number of Players"));
+        // Player selection panel
+        JPanel playerSelectionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        playerSelectionPanel.setBorder(BorderFactory.createTitledBorder("Select Number of Players"));
 
-        playerButtonGroup = new ButtonGroup();
+        ButtonGroup playerButtonGroup = new ButtonGroup();
         twoPlayersButton = new JRadioButton("2 Players");
         threePlayersButton = new JRadioButton("3 Players");
         fourPlayersButton = new JRadioButton("4 Players");
@@ -40,28 +43,45 @@ public class StartUI extends JFrame {
         playerButtonGroup.add(threePlayersButton);
         playerButtonGroup.add(fourPlayersButton);
 
-        playerPanel.add(twoPlayersButton);
-        playerPanel.add(threePlayersButton);
-        playerPanel.add(fourPlayersButton);
+        playerSelectionPanel.add(twoPlayersButton);
+        playerSelectionPanel.add(threePlayersButton);
+        playerSelectionPanel.add(fourPlayersButton);
 
-        twoPlayersButton.setSelected(true);  // Default selection
+        // Default selection
+        twoPlayersButton.setSelected(true);
 
-        mainPanel.add(playerPanel);
+        mainPanel.add(playerSelectionPanel);
 
-        // Player name and color input panel
+        // Players input panel
         playerInputPanel = new JPanel();
-        playerInputPanel.setLayout(new GridLayout(2, 1));
-        playerInputPanel.setBorder(BorderFactory.createTitledBorder("Enter Player Names and Choose Colors"));
-        updatePlayerInputFields(2);  // Start with 2 players as default
+        playerInputPanel.setLayout(new BoxLayout(playerInputPanel, BoxLayout.Y_AXIS));
+        playerInputPanel.setBorder(BorderFactory.createTitledBorder("Player Names and Colors:"));
+        playerInputPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         mainPanel.add(playerInputPanel);
 
-        // Map selection panel with horizontal layout
-        JPanel mapPanel = new JPanel();
-        mapPanel.setLayout(new FlowLayout(FlowLayout.LEFT));  // Horizontal layout
+        playerNameFields = new JTextField[4];
+        selectedColors = new Color[4];
+        colorLabelsForPlayers = new JLabel[4][preselectedColors.length];
+        isColorChosen = new boolean[preselectedColors.length];
+        previousColorIndex = new int[4];
+
+        for (int i = 0; i < 4; i++) {
+            previousColorIndex[i] = -1;
+        }
+
+        updatePlayerInputFields(2);  // Start with 2 players selected
+
+        // Add listeners to player selection
+        twoPlayersButton.addActionListener(e -> updatePlayerInputFields(2));
+        threePlayersButton.addActionListener(e -> updatePlayerInputFields(3));
+        fourPlayersButton.addActionListener(e -> updatePlayerInputFields(4));
+
+        // Map selection panel
+        mapPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         mapPanel.setBorder(BorderFactory.createTitledBorder("Select Map"));
 
-        mapButtonGroup = new ButtonGroup();
+        ButtonGroup mapButtonGroup = new ButtonGroup();
         fantasyWorldButton = new JRadioButton("Fantasy World");
         zamonienButton = new JRadioButton("Zamonien");
         tamrielButton = new JRadioButton("Tamriel");
@@ -75,59 +95,29 @@ public class StartUI extends JFrame {
         mapPanel.add(tamrielButton);
 
         fantasyWorldButton.setSelected(true);  // Default selection
+        mainPanel.add(mapPanel);  // Add map panel to the end
 
-        mainPanel.add(mapPanel);
-
-        // Start button
-        startButton = new JButton("Start Game");
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleStartGame();
-            }
-        });
+        JButton startButton = new JButton("Start Game");
+        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        startButton.addActionListener(e -> handleStartGame());  // Trigger game start when button is clicked
+        mainPanel.add(startButton);
 
         add(mainPanel, BorderLayout.CENTER);
-        add(startButton, BorderLayout.SOUTH);
-
-        // Add listeners to player selection buttons
-        twoPlayersButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updatePlayerInputFields(2);
-            }
-        });
-
-        threePlayersButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updatePlayerInputFields(3);
-            }
-        });
-
-        fourPlayersButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updatePlayerInputFields(4);
-            }
-        });
     }
 
+    // Method to update player input
     private void updatePlayerInputFields(int numberOfPlayers) {
         playerInputPanel.removeAll();
-        playerInputPanel.setLayout(new GridLayout(numberOfPlayers, 2));
-        playerNameFields = new JTextField[numberOfPlayers];
-        colorSelectionPanels = new JPanel[numberOfPlayers];
-        colorLabelsForPlayers = new JLabel[numberOfPlayers][preselectedColors.length];
 
         for (int i = 0; i < numberOfPlayers; i++) {
-            // Player name input field
-            playerNameFields[i] = new JTextField("Player " + (i + 1));
-            playerInputPanel.add(new JLabel("Name:"));
-            playerInputPanel.add(playerNameFields[i]);
+            JPanel playerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));  // Horizontal layout for each player
+            playerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            // Color selection panel
-            colorSelectionPanels[i] = new JPanel(new FlowLayout());
+            playerNameFields[i] = new JTextField("Player " + (i + 1), 10);  // Set text field size
+            playerPanel.add(new JLabel("Name:"));
+            playerPanel.add(playerNameFields[i]);
+
+            JPanel colorSelectionPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
             for (int j = 0; j < preselectedColors.length; j++) {
                 colorLabelsForPlayers[i][j] = new JLabel();
                 colorLabelsForPlayers[i][j].setPreferredSize(new Dimension(30, 30));
@@ -145,10 +135,11 @@ public class StartUI extends JFrame {
                     }
                 });
 
-                colorSelectionPanels[i].add(colorLabelsForPlayers[i][j]);
+                colorSelectionPanel.add(colorLabelsForPlayers[i][j]);
             }
 
-            playerInputPanel.add(colorSelectionPanels[i]);
+            playerPanel.add(colorSelectionPanel);
+            playerInputPanel.add(playerPanel);
         }
 
         playerInputPanel.revalidate();
@@ -156,40 +147,74 @@ public class StartUI extends JFrame {
     }
 
     private void handleColorSelection(int playerIndex, int colorIndex) {
-        // Assign the selected color to the player and highlight the selected color with a thicker border
-        colorLabelsForPlayers[playerIndex][colorIndex].setBorder(BorderFactory.createLineBorder(Color.BLACK, 5)); // Thicker border for selected color
+        // Check if the selected color has already been chosen
+        if (isColorChosen[colorIndex]) {
+            JOptionPane.showMessageDialog(this, "This color has already been chosen. Please select a different color.", "Color Unavailable", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (previousColorIndex[playerIndex] != -1) {
+            int prevColorIdx = previousColorIndex[playerIndex];
+            colorLabelsForPlayers[playerIndex][prevColorIdx].setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // Reset border for previous color
+            isColorChosen[prevColorIdx] = false;
 
-        // Disable the selected color for all other players without changing its appearance
+            // Re-enable the previous color
+            for (int i = 0; i < colorLabelsForPlayers.length; i++) {
+                if (i != playerIndex && colorLabelsForPlayers[i][prevColorIdx] != null) {
+                    colorLabelsForPlayers[i][prevColorIdx].setEnabled(true);
+                }
+            }
+        }
+
+        // Assign the selected color
+        colorLabelsForPlayers[playerIndex][colorIndex].setBorder(BorderFactory.createLineBorder(Color.BLACK, 5)); // Thicker border for selected color
+        selectedColors[playerIndex] = preselectedColors[colorIndex];
+        isColorChosen[colorIndex] = true;
+        previousColorIndex[playerIndex] = colorIndex;
+
+        // Disable the selected color for other players
         for (int i = 0; i < colorLabelsForPlayers.length; i++) {
-            if (i != playerIndex) {  // Disable for all other players
+            if (i != playerIndex && colorLabelsForPlayers[i][colorIndex] != null) {  // Disable for all other players and ensure it's not null
                 colorLabelsForPlayers[i][colorIndex].setEnabled(false);
             }
         }
     }
 
     private void handleStartGame() {
-        int numberOfPlayers = twoPlayersButton.isSelected() ? 2 : (threePlayersButton.isSelected() ? 3 : 4);
-        String[] playerNames = new String[numberOfPlayers];
+        int numPlayers = twoPlayersButton.isSelected() ? 2 : (threePlayersButton.isSelected() ? 3 : 4);
+        String[] playerNames = new String[numPlayers];
 
-        for (int i = 0; i < numberOfPlayers; i++) {
+        for (int i = 0; i < numPlayers; i++) {
             playerNames[i] = playerNameFields[i].getText();
         }
 
         String selectedMap = fantasyWorldButton.isSelected() ? "Fantasy World" :
                 (zamonienButton.isSelected() ? "Zamonien" : "Tamriel");
 
-        // You can now pass playerNames to your Game class
-        System.out.println("Starting game with " + numberOfPlayers + " players.");
-        for (int i = 0; i < numberOfPlayers; i++) {
-            System.out.println("Name: " + playerNames[i]);
-        }
-        System.out.println("Selected map: " + selectedMap);
+        // Print info
+        printGameInfo(numPlayers, playerNames, selectedColors, selectedMap);
 
-        // Add logic to start the game, such as opening the game window or passing data to another class
+        // Notify the listener
+        listener.onGameStart(playerNames, selectedColors, selectedMap, numPlayers);
+
+        // Destroy the panel
+        dispose();
     }
 
-    public static void main(String[] args) {
-        StartUI startUI = new StartUI();
-        startUI.setVisible(true);
+    private void printGameInfo(int numPlayers, String[] playerNames, Color[] playerColors, String selectedMap) {
+        System.out.println("Number of Players: " + numPlayers);
+        for (int i = 0; i < numPlayers; i++) {
+            System.out.println("Player " + (i + 1) + ": " + playerNames[i] + ", Color: " + getColorName(playerColors[i]));
+        }
+        System.out.println("Selected Map: " + selectedMap);
+    }
+
+    private String getColorName(Color color) {
+        if (color.equals(Color.RED)) return "Red";
+        if (color.equals(Color.BLUE)) return "Blue";
+        if (color.equals(Color.GREEN)) return "Green";
+        if (color.equals(Color.YELLOW)) return "Yellow";
+        if (color.equals(Color.ORANGE)) return "Orange";
+        if (color.equals(Color.MAGENTA)) return "Magenta";
+        return "Unknown Color";
     }
 }

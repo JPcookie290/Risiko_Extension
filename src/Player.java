@@ -10,18 +10,24 @@ public class Player {
     private int armyCount;
     private List<Card> cards;
     private Color color;
+    private int index;
 
-    public Player(String name) {
+    public Player(String name, Color color) {
         this.name = name;
         this.territories = new ArrayList<>();
         this.armyCount = 8; //TODO: change later for player amount
         this.cards = new ArrayList<>();
-        //this.color = color;
+        this.color = color;
+        this.index = 0;
     }
 
     //new addition
     public void decreaseArmyCount(int armies) {
         armyCount -= armies;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public String getName() {
@@ -64,6 +70,15 @@ public class Player {
 
     public boolean controlsContinent(Continent continent) {
         return new HashSet<>(territories).containsAll(continent.getTerritories());
+    }
+
+    // new addition
+    public void setIndex(int index){
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     // testing output

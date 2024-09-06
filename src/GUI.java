@@ -234,10 +234,14 @@ public class GUI {
                 territoryLabel.setOpaque(true);
 
                 //TODO: rework for Player name and color addition
-                if(territory.getOwner().getName().contains("Player 1")){
-                    territoryLabel.setBackground(new Color(255, 216, 132));
-                } else if (territory.getOwner().getName().contains("Player 2")) {
-                    territoryLabel.setBackground(new Color(219, 138, 221));
+                if(territory.getOwner().getIndex() == 0){
+                    territoryLabel.setBackground(currentPlayer.getColor());
+                } else if (territory.getOwner().getIndex() == 1) {
+                    territoryLabel.setBackground(currentPlayer.getColor());
+                } else if (territory.getOwner().getIndex() == 2) {
+                    territoryLabel.setBackground(currentPlayer.getColor());
+                } else if (territory.getOwner().getIndex() == 3) {
+                    territoryLabel.setBackground(currentPlayer.getColor());
                 } else {
                     territoryLabel.setBackground(Color.gray);
                 }

@@ -14,15 +14,13 @@ public class Game {
     private int round;
     private Color[] playerColors;
 
-    public Game(String[] playerNames, String selectedMap, int numPlayers) {
-        players = new Player[numPlayers];
-        for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player(playerNames[i]);
-        }
+    public Game(String[] playerNames, Color[] playerColor, String selectedMap, int numPlayers) {
+        // create players
+        players = createPlayers(playerNames, playerColor, numPlayers);
 
-        if (selectedMap.equals("Map 1")) {
+        if (selectedMap.equals("Fantasy World")) {
             this.board = new BoardFantasyWorld();
-        } else if (selectedMap.equals("Map 2")) {
+        } else if (selectedMap.equals("Zamonien")) {
             this.board = new BoardZamonien();
         } else {
             this.board = new BoardTamriel();
@@ -285,4 +283,21 @@ public void setCurrentPlayer(){
 
     //new addition
     public int getRound(){ return round; }
+
+    // randomize the players
+    public static Player[] createPlayers(String[] playerNames, Color[] playerColors, int numPlayers) {
+        List<Player> playerList = Arrays.asList(new Player[numPlayers]);
+
+        for (int i = 0; i < numPlayers; i++) {
+            playerList.set(i, new Player(playerNames[i], playerColors[i]));
+        }
+        Collections.shuffle(playerList);
+
+        Player[] newOrder = playerList.toArray(new Player[0]);
+        for (int i = 0; i < newOrder.length; i++){
+            newOrder[i].setIndex(i);
+        }
+        return newOrder;
+    }
+
 }
