@@ -6,11 +6,12 @@ TODO: add different cards to pick, check attack function (currently always losin
 TODO: highlight in attack/fortify function available territories
 TODO: create an active territory for the ability to change the current territory for the attack/fortifying
 TODO: create a map/board with a grid
-TODO: remove button
+TODO: remove buttons
+TODO: add possibility for players to choose their own territories
 
 Colors_URL: https://coolors.co/f6bd60-03635a-929787
 
 Current changes:
 * change buttons to labels to enable a color change on MacOS
 * add new Class files for the possibility of three different maps
-* created StartUI, StartListener and made small changes tro implement this in the Main
+* created StartUI, StartListener and made small changes to implement this in the Main

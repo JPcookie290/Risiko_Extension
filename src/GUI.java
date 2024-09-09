@@ -24,7 +24,7 @@ public class GUI {
 
     public GUI(Game game) {
         this.game = game;
-        this.frame = new JFrame("Risiko");
+        this.frame = new JFrame("Risiko: " + game.getBoard().getWorldName() + " Map");
         this.boardPanel = new JPanel();
         this.statusLabel = new JLabel("Current Player: ");
         this.selectedFrom = null;
@@ -140,7 +140,7 @@ public class GUI {
         return nextTurnButton;
     }
 
-    //eliminated distribution bug
+    // eliminated distribution bug
     private void distributeArmies() {
 
         while (game.getArmiesToDistribute() > 0) {
@@ -179,7 +179,14 @@ public class GUI {
                 }
             }
             //currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-            game.setCurrentPlayer();
+
+            // addition skip player if army count = 0
+            if (game.getNextPlayer(player.getIndex()).getArmyCount() == 0){
+                game.setNextDistributingPlayer(game.getNextPlayer(player.getIndex()));
+            } else {
+                game.setCurrentPlayer();
+            }
+
         }
 
         JOptionPane.showMessageDialog(frame, "All armies are distributed. The game begins now!");
@@ -190,36 +197,108 @@ public class GUI {
     private void updateBoard() {
         outputRound.setText("Round: " + String.valueOf(game.getRound()));
         boardPanel.removeAll();
-        boardPanel.setLayout(null);
+
+        boardPanel.setLayout(new GridLayout(15,20));
         boardPanel.setBackground(new Color(175, 222, 234)); // change color for better view
 
         //TODO rework layout
-        int rows = 4;
-        int cols = 6;
-        int buttonWidth = 135;
-        int buttonHeight = 85;
-        int padding = 20;
-        int groupSpacing = 300;
-        int startX = 20;
-        int startY = 20;
 
         Player currentPlayer = game.getCurrentPlayer();
-        List<Territory> territories = game.getBoard().getTerritories(); // addition ad territory list
-        int territoryIndex = 0;
-        for (int group = 0; group <4; group++){
-            int groupX = startX + (group % 2) * (6 *(padding ) + groupSpacing + (padding *2 ));
-            int groupY = startY + (group / 2) * (3 * (padding) + groupSpacing);
+        List<Territory> territories = game.getBoard().getTerritories(); // addition ad territory list // may not be needed => delete
+        Board currentBoard = game.getBoard();
 
-            //TODO rework because I changed the HashMap to an ArrayList/List
-            /*for (int i = 0; i < 6; i++) {
-                Territory territory = game.getBoard().getTerritories().values().stream()
-                        .skip(territoryIndex++)
-                        .findFirst()
-                        .orElse(null);
+        String[][] boardLayout = game.getBoard().getLayout();
+        for (int i = 0; i < boardLayout.length; i++) {
+            for (int j = 0; j < boardLayout[i].length; j++){
+                JLabel territoryLabel = new JLabel();
+                territoryLabel.setOpaque(true);
+                switch (boardLayout[i][j]) {
+                    // todo  add case with abbreviation list
+                    // case game.getBoard().getTerritoryByAbbr(boardLayout[i][j])
+                    case "GYJ":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Golf of Ylvena-Jiku").getColor());
+                        break;
+                    case "N":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Noluch").getColor());
+                        break;
+                    case "TU":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Tutland").getColor());
+                        break;
+                    case "TI":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Tihul").getColor());
+                        break;
+                    case "ME":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Meuland").getColor());
+                        break;
+                    case "V":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Vad").getColor());
+                        break;
+                    case "SD":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Selfan Districts").getColor());
+                        break;
+                    case "MI":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Miama").getColor());
+                        break;
+                    case "H":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Harland").getColor());
+                        break;
+                    case "AM":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Alcesbruian Mountains").getColor());
+                        break;
+                    case "LT":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Lonanese Theocracy").getColor());
+                        break;
+                    case "G":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Grantria").getColor());
+                        break;
+                    case "KC":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Kingdom of Cleolesbia").getColor());
+                        break;
+                    case "BRA":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Brampland").getColor());
+                        break;
+                    case "PW":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Principality of Wickwarn").getColor());
+                        break;
+                    case "KM":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Kingdom of Modh").getColor());
+                        break;
+                    case "PB":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Principality of Bunteria").getColor());
+                        break;
+                    case "S":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Seagela").getColor());
+                        break;
+                    case "RN":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Republic of Nird").getColor());
+                        break;
+                    case "BE":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Berja").getColor());
+                        break;
+                    case "DA":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Duchy of Axbria").getColor());
+                        break;
+                    case "EM":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Midbury Empire").getColor());
+                        break;
+                    case "KG":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Kingdom of Geumguk").getColor());
+                        break;
+                    case "BRI":
+                        territoryLabel.setBackground(currentBoard.getTerritory("Bridford").getColor());
+                        break;
+                    default:
+                        territoryLabel.setOpaque(false);
 
-                if (territory == null) {
-                    continue;
-                }*/
+                }
+
+                // add territoryLabel to the boardPanel
+                boardPanel.add(territoryLabel);
+            }
+        }
+
+        //removed previous code because of the new maps
+        /*
 
             for (int i = 0; i < 6; i++) {
                 if (territoryIndex >= territories.size()) {
@@ -228,26 +307,9 @@ public class GUI {
 
                 Territory territory = territories.get(territoryIndex++);
 
-                // new addition change Button to JLabel for MacOS view
-                JLabel territoryLabel = new JLabel("<html>" + territory.getName() + "<br>" + territory.getAssignedContinent() +
-                        "<br>Current Armies: " + territory.getArmyCount() + "</html>", SwingConstants.CENTER);
-                territoryLabel.setOpaque(true);
-
-                //TODO: rework for Player name and color addition
-                if(territory.getOwner().getIndex() == 0){
-                    territoryLabel.setBackground(currentPlayer.getColor());
-                } else if (territory.getOwner().getIndex() == 1) {
-                    territoryLabel.setBackground(currentPlayer.getColor());
-                } else if (territory.getOwner().getIndex() == 2) {
-                    territoryLabel.setBackground(currentPlayer.getColor());
-                } else if (territory.getOwner().getIndex() == 3) {
-                    territoryLabel.setBackground(currentPlayer.getColor());
-                } else {
-                    territoryLabel.setBackground(Color.gray);
-                }
-
                 territoryLabel.setBorder( new LineBorder(
                         territory.getOwner() == currentPlayer ? new Color(106, 181, 79) : new Color(163, 24, 45), 3));
+
                 territoryLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -272,7 +334,8 @@ public class GUI {
                 boardPanel.add(territoryLabel);
 
             }
-        }
+        }*/
+
         statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName() +
                 " | Territories: " + currentPlayer.getTerritories().size() + " | Armies: " + currentPlayer.getArmyCount() +
                 " | Cards: " + currentPlayer.getCards().size());
@@ -281,7 +344,7 @@ public class GUI {
         boardPanel.repaint();
 
         //TODO: rework later for more Players
-        //if (game.getRound() == 1 && game.getCurrentPlayer().getName().contains("Player 1")){
+        //if (game.getRound() == 1 && game.getCurrentPlayer().getIndex() == 0){
         //    distributeArmies();
         //}
     }
@@ -408,6 +471,12 @@ public class GUI {
         diceResultArea.setEditable(false);
         diceFrame.add(new JScrollPane(diceResultArea), BorderLayout.CENTER);
 
+        JButton okButton = getOkButton(diceFrame);
+        diceFrame.add(okButton, BorderLayout.SOUTH);
+        diceFrame.setVisible(true);
+    }
+
+    private JButton getOkButton(JFrame diceFrame) {
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
             @Override
@@ -421,8 +490,7 @@ public class GUI {
                 updateBoard();
             }
         });
-        diceFrame.add(okButton, BorderLayout.SOUTH);
-        diceFrame.setVisible(true);
+        return okButton;
     }
 
 
@@ -519,6 +587,18 @@ public class GUI {
         }
 
         JOptionPane.showMessageDialog(frame, "All bonus armies are distributed.");
+    }
+
+    // for testing
+    public void printInfo(Player owner, Territory territory){
+        System.out.println("Player");
+        System.out.println("Name: " + owner.getName() + ", Color: " + owner.getColor() + ", Index: " + owner.getIndex());
+        System.out.println("Territory: " + territory.getName());
+        for (Territory territory1 : owner.getTerritories()){
+            if (territory1.getName().equals(territory.getName())){
+                System.out.println("Player owns the territory");
+            }
+        }
     }
 
 }

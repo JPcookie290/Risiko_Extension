@@ -12,16 +12,23 @@ public class Player {
     private Color color;
     private int index;
 
-    public Player(String name, Color color) {
+    public Player(String name, Color color, int armyCount) {
         this.name = name;
         this.territories = new ArrayList<>();
-        this.armyCount = 8; //TODO: change later for player amount
+        //TODO will rework when players can pick territories
+        this.armyCount = armyCount;
         this.cards = new ArrayList<>();
         this.color = color;
         this.index = 0;
     }
 
     //new addition
+    public void setArmyCount(){
+        System.out.println("before setrArmyCount: " + armyCount);
+        this.armyCount -= territories.size();
+        System.out.println("after setArmyCount: " + armyCount);
+    }
+
     public void decreaseArmyCount(int armies) {
         armyCount -= armies;
     }

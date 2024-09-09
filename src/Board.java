@@ -9,12 +9,20 @@ public class Board {
     private List<Territory> territories;
     private List<Continent> continents; //changed to List
     private String worldName;
+    private String[][] layout;
 
     public Board() {
         this.worldName = null;
         this.territories = new ArrayList<>();
         this.continents = new ArrayList<>();
+        this.layout = null;
 
+    }
+
+    public String[][] getLayout(){ return this.layout; }
+
+    public void setLayout(String[][] layout) {
+        this.layout = layout;
     }
 
     public void setWorldName(String name) {

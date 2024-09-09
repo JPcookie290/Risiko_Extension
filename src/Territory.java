@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,9 @@ public class Territory {
     // new additions
     private String assignedContinent;
     private boolean neutrality;
+    private Color color;
 
-    public Territory(String name, String assignedContinent) {
+    public Territory(String name, String assignedContinent, Color color) {
         this.name = name;
         this.owner = null;
         this.armyCount = 0;
@@ -18,6 +20,7 @@ public class Territory {
         // new additions
         this.neutrality = getNeutrality();
         this.assignedContinent = assignedContinent;
+        this.color = color;
     }
 
     public String getName() {
@@ -31,6 +34,10 @@ public class Territory {
     // new additions
     public boolean getNeutrality(){
         return this.owner == null;
+    }
+
+    public Color getColor() {
+        return color;
     }
 
     public void removeOwner(Player owner) {

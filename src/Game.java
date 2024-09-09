@@ -11,6 +11,7 @@ public class Game {
     private boolean isDistributing;
     private int armiesToDistribute;
     // new addition
+    private List<Card> allCards;
     private int round;
     private Color[] playerColors;
 
@@ -36,7 +37,7 @@ public class Game {
         this.round = 0;
 
 
-         this.board.outputControl(); // -> to delete
+        //this.board.outputControl(); // -> to delete
         initializeGame();
     }
 
@@ -44,8 +45,10 @@ public class Game {
     private int calculateArmiesToDistribute(){
         int totalArmies = 0;
         for (Player player : players) {
+            System.out.println(player.getName() + " army amount: " + player.getArmyCount());
             totalArmies += player.getArmyCount();
         }
+        System.out.println(totalArmies);
         return totalArmies;
     }
 
@@ -65,6 +68,7 @@ public class Game {
         List<Territory> allTerritories = new ArrayList<>(board.getTerritories());
         Collections.shuffle(allTerritories);
 
+        // TODO add player choose their own territory
         for (int i = 0; i < allTerritories.size(); i++) {
             Player player = players[i % players.length];
             Territory territory = allTerritories.get(i);
@@ -74,15 +78,32 @@ public class Game {
             System.out.println("Territory " + territory.getName() + " assigned to " + player.getName());
         }
 
-
-        //TODO: add different cards
-        List<Card> allCards = new ArrayList<>();
-        for (int i = 0; i < 24; i++) {
-            allCards.add(new Card("Infantry"));
+        for (Player each : players){
+            each.setArmyCount();
         }
-        Collections.shuffle(allCards);
+
+        // add different cards
+        allCards = getCards();
 
     }
+
+    // new addition add different cards
+    public List<Card> getCards(){
+        List<Card> cards = new ArrayList<>();
+        for (int i = 0; i < 40; i++) {
+            cards.add(new Card("Infantry"));
+        }
+        for (int i = 0; i < 12; i++) {
+            cards.add(new Card("Cavalry"));
+        }
+        for (int i = 0; i < 8; i++) {
+            cards.add(new Card("Artillery"));
+        }
+        Collections.shuffle(cards);
+
+        return cards;
+    }
+
 
     public Player[] getPlayers() {
         return players;
@@ -94,7 +115,7 @@ public class Game {
 
     public void startDistributingArmies() {
         isDistributing = true;
-        armiesToDistribute = 16;
+        //armiesToDistribute = 16;
     }
 
     public boolean distributeArmy(Territory territory, int armies) {
@@ -127,6 +148,15 @@ public class Game {
         return players[currentPlayerIndex];
     }
 
+    // new addition
+    public Player getNextPlayer(int currentPlayerIndex) {
+        if( players[players.length - 1].getIndex() == currentPlayerIndex){
+            return players[0];
+        } else {
+            return players[currentPlayerIndex + 1];
+        }
+    }
+
     public void nextTurn() {
         if (!isDistributing) {
             reinforcePhase();
@@ -138,14 +168,26 @@ public class Game {
         }
         // new addition
         //TODO: rework when names are edited for index based
-        if (getCurrentPlayer().getName().contains("Player 2")) {
+        if (getCurrentPlayer().getIndex() == (players.length - 1)) {
             round++;
-            System.out.println(round);
+            System.out.println("round test: " + round);
         }
     }
-public void setCurrentPlayer(){
-    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-}
+
+    //TODO rework
+    public void setNextDistributingPlayer(Player nextPlayer){
+        int index = nextPlayer.getIndex();
+        if (index == players.length - 1){
+            currentPlayerIndex = 0;
+        } else {
+            currentPlayerIndex = index + 1;
+        }
+    }
+
+    public void setCurrentPlayer(){
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+    }
+
     public boolean checkWinCondition() {
         for (Territory territory : board.getTerritories()) {
             if (territory.getOwner() != getCurrentPlayer()) {
@@ -169,6 +211,7 @@ public void setCurrentPlayer(){
         System.out.println(currentPlayer.getName() + " receives " + reinforcements + " reinforcement armies.");
     }
 
+    // todo rework for different card types
     private void cardReinforcementPhase() {
         Player currentPlayer = getCurrentPlayer();
         List<Card> cards = playerCards.get(currentPlayer);
@@ -198,7 +241,13 @@ public void setCurrentPlayer(){
             if (territoryConquered) break;
         }
         if (territoryConquered) {
-            playerCards.get(currentPlayer).add(new Card("Infantry"));
+            // addition choose a random card & remove it from the list
+            int cardIndex = random.nextInt(allCards.size());
+            Card newPlayerCard = allCards.get(cardIndex);
+            allCards.remove(cardIndex);
+
+            playerCards.get(currentPlayer).add(newPlayerCard);
+
             if (playerCards.get(currentPlayer).size() > 5) {
                 cardReinforcementPhase();
             }
@@ -287,9 +336,17 @@ public void setCurrentPlayer(){
     // randomize the players
     public static Player[] createPlayers(String[] playerNames, Color[] playerColors, int numPlayers) {
         List<Player> playerList = Arrays.asList(new Player[numPlayers]);
+        int armyCount;
+        if (numPlayers == 4){
+            armyCount = 30;
+        } else if (numPlayers == 3) {
+            armyCount = 25;
+        } else {
+            armyCount = 20;
+        }
 
         for (int i = 0; i < numPlayers; i++) {
-            playerList.set(i, new Player(playerNames[i], playerColors[i]));
+            playerList.set(i, new Player(playerNames[i], playerColors[i], armyCount));
         }
         Collections.shuffle(playerList);
 

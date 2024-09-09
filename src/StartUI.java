@@ -190,6 +190,9 @@ public class StartUI extends JFrame {
         String selectedMap = fantasyWorldButton.isSelected() ? "Fantasy World" :
                 (zamonienButton.isSelected() ? "Zamonien" : "Tamriel");
 
+        // Check if color exists
+        // TODO: assign colors if none were chosen
+
         // Print info
         printGameInfo(numPlayers, playerNames, selectedColors, selectedMap);
 

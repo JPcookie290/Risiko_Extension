@@ -1,5 +1,6 @@
+import java.awt.*;
+
 public class BoardFantasyWorld extends Board{
-    private String[][] layout;
 
     public BoardFantasyWorld() {
         super();
@@ -9,43 +10,64 @@ public class BoardFantasyWorld extends Board{
         createContinents(list);
         createTerritories();
         setAllAdjacentTerritories();
-        this.layout = new String[][]{
+        String[][] layoutFantansy = new String[][]{
                 {"", "", "", "GYJ", "N", "N", "N", "", "", "", "", "", "SD", "SD", "SD", "AM", "G", "G", "G", "G"},
                 {"", "", "", "GYJ", "N", "N", "N", "TU", "", "", "SD", "SD", "SD", "SD", "SD", "AM", "AM", "G", "G", "G"},
                 {"GYJ", "", "GYJ", "GYJ", "GYJ", "N", "N", "TU", "TU", "MI", "MI", "SD", "SD", "H", "H", "AM", "AM", "G", "G", "G"},
                 {"GYJ", "GYJ", "GYJ", "GYJ", "GYJ", "TI", "TU", "TU", "TU", "MI", "MI", "MI", "H", "H", "H", "AM", "AM", "AM", "LT", "LT"},
-                {"V", "GYJ", "ME", "ME", "NE", "TI", "TI", "TU", "TI", "TI", "MI", "MI", "H", "H", "H", "AM", "AM", "AM", "LT", "LT"},
-
+                {"V", "GYJ", "ME", "ME", "ME", "TI", "TI", "TU", "TI", "TI", "MI", "MI", "H", "H", "H", "AM", "AM", "AM", "LT", "LT"},
+                {"V", "V", "V", "ME", "ME", "TI", "TI", "TI", "TI", "MI", "MI", "MI", "BE", "BE", "H", "AM", "KG", "LT", "LT", "LT"},
+                {"V", "V", "V", "ME", "ME", "ME", "TI", "TI", "PW", "PW", "RN", "RN", "BE", "BE", "H", "KG", "KG", "KG", "LT", "LT"},
+                {"V", "V", "ME", "ME", "ME", "ME", "PW", "PW", "PW", "PW", "RN", "RN", "BE", "BE", "BE", "BE", "KG", "KG", "LT", "LT"},
+                {"V", "KC", "KC", "ME", "BRA", "BRA", "PW", "PW", "PW", "PW", "RN", "RN", "BE", "BE", "BE", "KG", "KG", "KG", "KG", ""},
+                {"", "KC", "KC", "BRA", "BRA", "BRA", "PW", "PW", "PW", "PW", "KM", "RN", "BRI", "BE", "BE", "KG", "KG", "KG", "", ""},
+                {"", "KC", "KC", "BRA", "BRA", "BRA", "PB", "PB", "KM", "KM", "KM", "BRI", "BRI", "BRI", "BRI", "BRI", "EM", "EM", "", ""},
+                {"", "", "KC", "S", "BRA", "BRA", "PB", "PB", "KM", "KM", "KM", "KM", "BRI", "BRI", "BRI", "BRI", "", "EM", "EM", ""},
+                {"", "", "", "S", "S", "PB", "PB", "PB", "PB", "KM", "KM", "DA", "DA", "BRI", "", "", "", "EM", "EM", ""},
+                {"", "", "", "S", "S", "S", "PB", "PB", "PB", "PB", "PB", "DA", "DA", "DA", "DA", "", "EM", "EM", "EM", "EM"},
+                {"", "S", "S", "S", "S", "S", "", "PB", "PB", "PB", "DA", "DA", "DA", "DA", "DA", "DA", "EM", "EM", "EM", "EM"},
         };
+        setLayout(layoutFantansy);
     }
 
+    // TODO: abbreviation list
     // creates and adds territories to the continents
     public void createTerritories() {
         // Continent Framish Empire
         String[] continentOneList = new String[]{"Vad", "Meuland", "Tihul", "Tutland", "Noluch", "Golf of Ylvena-Jiku"};
-        for ( String territoryName : continentOneList ){
-            Territory newTerritory = new Territory(territoryName, "Framish Empire");
+        Color[] continentOneColor = new Color[]{new Color(100, 166, 101), new Color(161, 186, 92), new Color(107, 128, 44), new Color(84, 174, 20), new Color(76, 128, 44), new Color(110, 165, 73)};
+        for (int i = 0; i < continentOneList.length; i++) {
+            Territory newTerritory = new Territory(continentOneList[i], "Framish Empire", continentOneColor[i]);
             getContinent("Framish Empire").addTerritory(newTerritory);
             addTerritory(newTerritory);
         }
+        // old version => rewritten for territory color
+        /*for ( String territoryName : continentOneList ){
+            Territory newTerritory = new Territory(territoryName, "Framish Empire");
+            getContinent("Framish Empire").addTerritory(newTerritory);
+            addTerritory(newTerritory);
+        }*/
         // Continent Commonwealth of Poruntas
         String[] continentTwoList = new String[]{"Kingdom of Cleolesbia", "Brampland", "Principality of Bunteria", "Kingdom of Modh", "Principality of Wickwarn", "Seagela"};
-        for ( String territoryName : continentTwoList ){
-            Territory newTerritory = new Territory(territoryName, "Commonwealth of Poruntas");
+        Color[] continentTwoColor = new Color[]{new Color(234, 149, 89), new Color(195, 115, 19), new Color(255, 169, 53), new Color(225, 120, 16), new Color(216, 99, 35), new Color(209, 105, 58)};
+        for (int i = 0; i < continentTwoList.length; i++){
+            Territory newTerritory = new Territory(continentTwoList[i], "Commonwealth of Poruntas", continentTwoColor[i]);
             getContinent("Commonwealth of Poruntas").addTerritory(newTerritory);
             addTerritory(newTerritory);
         }
         // Continent Dominion of Watchhaim
         String[] continentThreeList = new String[]{"Grantria", "Harland", "Selfan Districts", "Alcesbruian Mountains", "Miama", "Lonanese Theocracy" };
-        for ( String territoryName : continentThreeList ){
-            Territory newTerritory = new Territory(territoryName, "Dominion of Watchhaim");
+        Color[] continentThreeColor = new Color[]{new Color(108, 74, 149), new Color(98, 19, 195), new Color(154, 101, 216), new Color(86, 36, 154), new Color(100, 79, 131), new Color(144, 66, 241)};
+        for (int i = 0; i < continentThreeList.length; i++){
+            Territory newTerritory = new Territory(continentThreeList[i], "Dominion of Watchhaim", continentThreeColor[i]);
             getContinent("Dominion of Watchhaim").addTerritory(newTerritory);
             addTerritory(newTerritory);
         }
         // Continent Diru
         String[] continentFourList = new String[]{"Republic of Nird", "Midbury Empire", "Kingdom of Geumguk", "Berja", "Duchy of Axbria", "Bridford"};
-        for ( String territoryName : continentFourList ){
-            Territory newTerritory = new Territory(territoryName, "Diru");
+        Color[] continentFourColor = new Color[]{new Color(251, 255, 90), new Color(197, 198, 69), new Color(252, 255, 5), new Color(255, 242, 104), new Color(255, 227, 42), new Color(255, 221, 0)};
+        for (int i = 0; i < continentFourList.length; i++){
+            Territory newTerritory = new Territory(continentFourList[i], "Diru", continentFourColor[i]);
             getContinent("Diru").addTerritory(newTerritory);
             addTerritory(newTerritory);
         }

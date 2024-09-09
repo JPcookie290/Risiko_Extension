@@ -10,12 +10,14 @@ public class BoardZamonien extends Board {
         this.setWorldName("Zamonien");
         String[] list = new String[]{"Zentralzamonien", "Westzamonien", "Ostzamonien", "Südzamonien", "Nordzamonien"};
         createContinents(list);
-        createTerritories();
-        setAllAdjacentTerritories();
+        //createTerritories();
+        //setAllAdjacentTerritories();
     }
 
     // creates and adds territories to the continents
+    /*
     public void createTerritories() {
+
         // Continent Zentralzamonien
         String[] continentOneList = new String[]{"Suesse Wueste", "Loch Lach", "Daemonenklamm", "Der grosse Kopf"};
         for ( String territoryName : continentOneList ){
@@ -52,6 +54,8 @@ public class BoardZamonien extends Board {
             addTerritory(newTerritory);
         }
     }
+
+     */
 
     // Function to add the adjacent territories
     private void setAllAdjacentTerritories(){

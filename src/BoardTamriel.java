@@ -5,11 +5,11 @@ public class BoardTamriel extends Board{
         this.setWorldName("Tamriel");
         String[] list = new String[]{"Aldmeri Dominion", "Ebonheart Pact", "Daggerfall Covenent"};
         createContinents(list);
-        createTerritories();
+        //createTerritories();
     }
 
     // creates and adds territories to the continents
-    public void createTerritories() {
+    /*public void createTerritories() {
         // Continent Aldmeri Dominion
         String[] continentOneList = new String[]{"Khenathi's Roost", "Grathwood", "Greenshade", "Malabal Tor", "Reaper's March", "West Weals", "Auridon", "Summerset", "Elsweyr"};
         for ( String territoryName : continentOneList ){
@@ -29,5 +29,5 @@ public class BoardTamriel extends Board{
             getContinent("Daggerfall Covenent").addTerritory(newTerritory);
         }
 
-    }
+    }*/
 }
