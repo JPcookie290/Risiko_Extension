@@ -45,6 +45,10 @@ public class Board {
         System.out.println(this.territories);
     }
 
+    public int territoriesLength(){
+        return territories.size();
+    }
+
 
     // removed setAdjacentTerritories() since it is not needed in this version
 

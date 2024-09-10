@@ -1,5 +1,7 @@
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +22,9 @@ public class GUI {
     private boolean isFortifying;
     private boolean isDistributing;
     // new addition
-    private final JLabel outputRound;
+    private JPanel infoPanel;
+    private JLabel controlRound;
+    private int armiesSelected;
 
     public GUI(Game game) {
         this.game = game;
@@ -31,7 +35,10 @@ public class GUI {
         this.selectedTo = null;
         this.isFortifying = false;
         this.isDistributing = false;
-        this.outputRound = new JLabel(); // adds round output
+        // additions
+        this.armiesSelected = 0;
+        this.infoPanel = new JPanel();
+        this.controlRound = new JLabel();
     }
 
     public void start() {
@@ -42,7 +49,7 @@ public class GUI {
 
     public void createAndShowGUI() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(950, 800);
+        frame.setSize(950, 950);
         frame.setLayout(new BorderLayout());
 
         boardPanel.setLayout(new GridLayout(15, 20));
@@ -52,8 +59,7 @@ public class GUI {
         frame.add(statusLabel, BorderLayout.SOUTH);
 
         JPanel controlPanel = new JPanel();
-
-        controlPanel.add(outputRound);  // adds output to controlPanel, may be removed later
+        controlPanel.add(controlRound);
 
         //Create Buttons
         JButton nextTurnButton = getNextTurnButton();
@@ -68,8 +74,50 @@ public class GUI {
         controlPanel.add(useCardButton);
 
         frame.add(controlPanel, BorderLayout.NORTH);
+        frame.add(infoPanel, BorderLayout.SOUTH);
+        updateInfoPanel();
+
         frame.setVisible(true);
     }
+
+    // addition infoPanel
+    private void updateInfoPanel(){
+        Player player = game.getCurrentPlayer();
+
+        infoPanel.removeAll();
+        infoPanel.setLayout(new GridLayout(3,2));
+
+        Border lineBorder = BorderFactory.createLineBorder(player.getColor(),2);
+        TitledBorder border = BorderFactory.createTitledBorder(lineBorder, player.getName());
+        border.setTitleColor( player.getColor() );
+        infoPanel.setBorder(border);
+        // Territories
+        JLabel labelTerritories = new JLabel("Territories:");
+        infoPanel.add(labelTerritories);
+        StringBuilder territories = new StringBuilder();
+        for (Territory playerTerritory : player.getTerritories()) {
+            territories.append(playerTerritory.getName()).append(", ");
+        }
+        JLabel territoriesList = new JLabel("<html>"+ territories + "</html>");
+        // Armies
+        JLabel labelArmies = new JLabel("Armies:");
+        JLabel armyAmount = new JLabel(String.valueOf(player.getArmyCount()));
+        // Cards
+        JLabel labelCards = new JLabel("Cards:");
+        String cards = "";
+        for (Card card : player.getCards()){
+            territories.append(card.getType()).append(", ");
+        }
+        JLabel cardList = new JLabel(String.valueOf(cards));
+        // add to infoPanel
+        infoPanel.add(labelTerritories);
+        infoPanel.add(territoriesList);
+        infoPanel.add(labelArmies);
+        infoPanel.add(armyAmount);
+        infoPanel.add(labelCards);
+        infoPanel.add(cardList);
+    }
+
     // removes Buttons from createAndShowGUI() and create their own functions
 
     private JButton getUseCardButton() {
@@ -195,146 +243,73 @@ public class GUI {
     }
 
     private void updateBoard() {
-        outputRound.setText("Round: " + String.valueOf(game.getRound()));
         boardPanel.removeAll();
 
         boardPanel.setLayout(new GridLayout(15,20));
         boardPanel.setBackground(new Color(175, 222, 234)); // change color for better view
+        controlRound.setText("Round: " + game.getRound());
 
-        //TODO rework layout
-
+        //TODO rework layout, add abbreviation and army display
         Player currentPlayer = game.getCurrentPlayer();
-        List<Territory> territories = game.getBoard().getTerritories(); // addition ad territory list // may not be needed => delete
-        Board currentBoard = game.getBoard();
-
+        //List<Territory> territories = game.getBoard().getTerritories(); // addition ad territory list
+        //Board currentBoard = game.getBoard();
         String[][] boardLayout = game.getBoard().getLayout();
+        Color territoryColor = null;
+
         for (int i = 0; i < boardLayout.length; i++) {
             for (int j = 0; j < boardLayout[i].length; j++){
-                JLabel territoryLabel = new JLabel();
-                territoryLabel.setOpaque(true);
-                switch (boardLayout[i][j]) {
-                    // todo  add case with abbreviation list
-                    // case game.getBoard().getTerritoryByAbbr(boardLayout[i][j])
-                    case "GYJ":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Golf of Ylvena-Jiku").getColor());
-                        break;
-                    case "N":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Noluch").getColor());
-                        break;
-                    case "TU":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Tutland").getColor());
-                        break;
-                    case "TI":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Tihul").getColor());
-                        break;
-                    case "ME":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Meuland").getColor());
-                        break;
-                    case "V":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Vad").getColor());
-                        break;
-                    case "SD":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Selfan Districts").getColor());
-                        break;
-                    case "MI":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Miama").getColor());
-                        break;
-                    case "H":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Harland").getColor());
-                        break;
-                    case "AM":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Alcesbruian Mountains").getColor());
-                        break;
-                    case "LT":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Lonanese Theocracy").getColor());
-                        break;
-                    case "G":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Grantria").getColor());
-                        break;
-                    case "KC":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Kingdom of Cleolesbia").getColor());
-                        break;
-                    case "BRA":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Brampland").getColor());
-                        break;
-                    case "PW":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Principality of Wickwarn").getColor());
-                        break;
-                    case "KM":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Kingdom of Modh").getColor());
-                        break;
-                    case "PB":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Principality of Bunteria").getColor());
-                        break;
-                    case "S":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Seagela").getColor());
-                        break;
-                    case "RN":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Republic of Nird").getColor());
-                        break;
-                    case "BE":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Berja").getColor());
-                        break;
-                    case "DA":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Duchy of Axbria").getColor());
-                        break;
-                    case "EM":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Midbury Empire").getColor());
-                        break;
-                    case "KG":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Kingdom of Geumguk").getColor());
-                        break;
-                    case "BRI":
-                        territoryLabel.setBackground(currentBoard.getTerritory("Bridford").getColor());
-                        break;
-                    default:
-                        territoryLabel.setOpaque(false);
+                JLabel territoryLabel = new JLabel("", SwingConstants.CENTER);
+                String abbr = boardLayout[i][j];
 
+                if(!boardLayout[i][j].isEmpty()){
+                    Territory currentTerritory = game.getTerritoryByAbbr(boardLayout[i][j]);
+                    territoryLabel.setOpaque(true);
+                    //TODO not working create class coordinate wit two integers, if null set current coordinate
+                    if (currentTerritory.isFirstPanel() && !currentTerritory.getNeutrality()){
+                        territoryColor = currentTerritory.getOwner().getColor();
+                        territoryLabel.setText(currentTerritory.getAbbr());
+                        currentTerritory.setFirstPanel();
+                        currentTerritory.setSecondPanel();
+                    } else if (currentTerritory.isSecondPanel() && !currentTerritory.getNeutrality()) {
+                        territoryColor = currentTerritory.getOwner().getColor();
+                        territoryLabel.setText(String.valueOf(currentTerritory.getArmyCount()));
+                        currentTerritory.setSecondPanel();
+                    } else {
+                        territoryColor = game.getTerritoryColor(abbr);
+                    }
+
+                    territoryLabel.setBackground(territoryColor);
                 }
 
-                // add territoryLabel to the boardPanel
-                boardPanel.add(territoryLabel);
-            }
-        }
+                setBorders(i,j,abbr,territoryLabel,boardLayout);
 
-        //removed previous code because of the new maps
-        /*
-
-            for (int i = 0; i < 6; i++) {
-                if (territoryIndex >= territories.size()) {
-                    break;
-                }
-
-                Territory territory = territories.get(territoryIndex++);
-
-                territoryLabel.setBorder( new LineBorder(
-                        territory.getOwner() == currentPlayer ? new Color(106, 181, 79) : new Color(163, 24, 45), 3));
 
                 territoryLabel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (e.getButton() == MouseEvent.BUTTON1){
-                            handleTerritoryClick(territory);
+                            handleTerritoryClick(abbr);
                         }
+                        // for testing
                         // add right mouse click to display adjacent territories
-                        if (e.getButton() == MouseEvent.BUTTON3 && territory.getOwner() == currentPlayer){
-                            JOptionPane.showMessageDialog(frame, showAdjacentTerritories(territory));
+                        if (e.getButton() == MouseEvent.BUTTON3 && game.getTerritoryByAbbr(abbr).getOwner() == currentPlayer){
+                            JOptionPane.showMessageDialog(frame, showTerritoryInformation(abbr));
                         }
-                        if (e.getButton() == MouseEvent.BUTTON3 && territory.getOwner() != currentPlayer) {
+                        if (e.getButton() == MouseEvent.BUTTON3 && game.getTerritoryByAbbr(abbr).getOwner() != currentPlayer) {
                             JOptionPane.showMessageDialog(frame, "This is not your territory!");
                         }
                     }
                 });
-                // previous Code removed since it changed from ActionListener to MouseAdapter
 
-                int xPosition = groupX + (i % 3) * (buttonWidth + padding);
-                int yPosition = groupY + (i / 3) * (buttonHeight + padding);
-
-                territoryLabel.setBounds(xPosition, yPosition, buttonWidth, buttonHeight);
+                // add territoryLabel to the boardPanel
                 boardPanel.add(territoryLabel);
 
             }
-        }*/
+        }
+
+        //removed previous code because of the new maps
+
+        updateInfoPanel();
 
         statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName() +
                 " | Territories: " + currentPlayer.getTerritories().size() + " | Armies: " + currentPlayer.getArmyCount() +
@@ -349,29 +324,109 @@ public class GUI {
         //}
     }
 
-    // addition function to display adjacent territories
-    private ArrayList<String> showAdjacentTerritories(Territory territory){
+    // TODO rework
+    // Carina
+    public void setBorders(int i, int j, String territoryAbbr, JLabel territory, String[][] allMapTiles) {
+        // remove any existing border
+        territory.setBorder(BorderFactory.createEmptyBorder());
+
+        // get border color
+        Territory currentTerritory = game.getTerritoryByAbbr(territoryAbbr);
+        Color borderColor = null;
+        if (currentTerritory != null && !currentTerritory.getNeutrality()){
+            borderColor = currentTerritory.getOwner().getColor();
+        }
+        if (currentTerritory != null && currentTerritory.getNeutrality()){
+            borderColor = Color.gray;
+        }
+        //System.out.println(borderColor);
+
+        // create a new border
+        Border border = BorderFactory.createEmptyBorder();
+
+        // check neighbor in the north
+        if (i > 0) {
+            //JLabel northNeighbor = allMapTiles[i - 1][j];
+            if (!territoryAbbr.equals(allMapTiles[i - 1][j])) {
+                border = BorderFactory.createMatteBorder(3, 0, 0, 0, borderColor);
+            }
+        }
+
+        // check neighbor in the south
+        if (i < allMapTiles.length - 1) {
+            //JLabel southNeighbor = allMapTiles[i + 1][j];
+            //if (!territoryAbbr.equals(southNeighbor.getClientProperty("territory"))) {
+            if (!territoryAbbr.equals(allMapTiles[i + 1][j])) {
+                border = BorderFactory.createCompoundBorder(border, BorderFactory.createMatteBorder(0, 0, 3, 0, borderColor));
+            }
+        }
+
+        // check neighbor in the west
+        if (j > 0) {
+            //JLabel westNeighbor = allMapTiles[i][j - 1];
+            if (!territoryAbbr.equals(allMapTiles[i][j - 1])) {
+                border = BorderFactory.createCompoundBorder(border, BorderFactory.createMatteBorder(0, 3, 0, 0, borderColor));
+            }
+        }
+
+        // check neighbor in the east
+        if (j < allMapTiles[i].length - 1) {
+            //JLabel eastNeighbor = allMapTiles[i][j + 1];
+            if (!territoryAbbr.equals(allMapTiles[i][j + 1])) {
+                border = BorderFactory.createCompoundBorder(border, BorderFactory.createMatteBorder(0, 0, 0, 3, borderColor));
+            }
+        }
+
+        // add the border on the tile
+        territory.setBorder(border);
+    }
+
+
+    // addition function to display adjacent territories => for testing purpose
+    private ArrayList<String> showTerritoryInformation(String abbr){
+        Territory territory = game.getTerritoryByAbbr(abbr);
         ArrayList<String> display = new ArrayList<>();
+        display.add("Name: " + territory.getName() + "\nContinent: " + territory.getAssignedContinent() + "\nOwner: " + territory.getOwner().getName());
+        display.add("\nTerritories available to attack\n");
         territory.getAdjacentTerritories().forEach((adjacent) -> {
             if (territory.getOwner() != adjacent.getOwner()){
-                display.add("attack: " + adjacent.getName());
-            } else {
-                display.add("fortify: " + adjacent.getName());
+                display.add(adjacent.getName());
+            }
+        });
+        display.add("\nTerritories available to fortify\n");
+        territory.getAdjacentTerritories().forEach((adjacent) -> {
+            if (territory.getOwner() == adjacent.getOwner()){
+                display.add(adjacent.getName());
             }
         });
         return display;
     }
 
-    private void handleTerritoryClick(Territory clickedTerritory) {
-        if (clickedTerritory == null) {
-            JOptionPane.showMessageDialog(frame, "Fehler: Das ausgewählte Territorium existiert nicht.");
-            return;
+    //TODO: rework the events
+    private void handleTerritoryClick(String territoryAbbr) {
+        Territory clickedTerritory = game.getTerritoryByAbbr(territoryAbbr);
+
+        if (game.getRound() == 0){
+            if (game.territorySelection(clickedTerritory)){
+                armiesSelected++;
+                // set next player
+                game.setCurrentPlayer();
+            } else {
+                JOptionPane.showMessageDialog(frame, clickedTerritory.getName() + " has already been selected. Choose another territory.");
+            }
+            if (armiesSelected == game.getBoard().getTerritories().size()){
+                game.setRound();
+            }
+            updateBoard();
         }
+
+        /*
         if (isDistributing) {
             return;
         }
 
-        if (isFortifying) {
+        // TODO rework
+        if (isFortifying && game.getRound() > 0) {
             if (selectedFrom == null) {
                 if (clickedTerritory.getOwner() == game.getCurrentPlayer()) {
                     selectedFrom = clickedTerritory;
@@ -435,7 +490,7 @@ public class GUI {
                     JOptionPane.showMessageDialog(frame, "Invalid number of armies. Must be between 1 and 3 and not more than available.");
                 }
             }
-        }
+        }*/
     }
 
     private void useCards() {
@@ -516,8 +571,8 @@ public class GUI {
         Arrays.sort(defendDice);
 
         StringBuilder result = new StringBuilder();
-        result.append("Attacker's dice: ").append(Arrays.toString(reverseArray(attackDice))).append("\n");
-        result.append("Defender's dice: ").append(Arrays.toString(reverseArray(defendDice))).append("\n");
+        result.append("Attacker's dice: ").append(Arrays.toString(game.reverseArray(attackDice))).append("\n");
+        result.append("Defender's dice: ").append(Arrays.toString(game.reverseArray(defendDice))).append("\n");
 
         int minComparisons = Math.min(attackDice.length, defendDice.length);
         int attackerLosses = 0;
@@ -544,13 +599,6 @@ public class GUI {
         }
 
         return result.toString();
-    }
-    private int[] reverseArray(int[] array) {
-        int[] reversed = new int[array.length];
-        for (int i = 0; i < array.length; i++) {
-            reversed[i] = array[array.length - 1 - i];
-        }
-        return reversed;
     }
 
     private void distributeBonusArmies(Player player, int armiesToDistribute) {

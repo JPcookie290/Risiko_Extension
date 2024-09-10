@@ -52,39 +52,52 @@ public class Game {
         return totalArmies;
     }
 
+    public void setRound(){ this.round++; }
+
     public int getArmiesToDistribute() { return armiesToDistribute; }
 
     public void decreaseArmiesToDistribute(int armies) {
-        getCurrentPlayer().decreaseArmyCount(armies);
+        getCurrentPlayer().removeArmies(armies);
         calculateArmiesToDistribute();
     }
 
     private void initializeGame() {
-        round++;
+        List<Territory> allTerritories = new ArrayList<>(board.getTerritories());
 
         for (Player player : players) {
             playerCards.put(player, new ArrayList<>());
         }
-        List<Territory> allTerritories = new ArrayList<>(board.getTerritories());
-        Collections.shuffle(allTerritories);
 
-        // TODO add player choose their own territory
-        for (int i = 0; i < allTerritories.size(); i++) {
-            Player player = players[i % players.length];
-            Territory territory = allTerritories.get(i);
-            territory.setOwner(player);
-            territory.addArmies(1);
-            player.addTerritory(territory);
-            System.out.println("Territory " + territory.getName() + " assigned to " + player.getName());
-        }
 
-        for (Player each : players){
-            each.setArmyCount();
-        }
+        // removed code because of player selection of the territories
 
         // add different cards
         allCards = getCards();
+    }
 
+    // addition for players to select territories
+    public boolean territorySelection(Territory territory){
+
+        Player currentPlayer = getCurrentPlayer();
+
+        if (territory.getOwner() == null){
+            currentPlayer.addTerritory(territory);
+            territory.setOwner(currentPlayer);
+            territory.addArmies(1);
+            currentPlayer.removeArmies(1);
+            return true;
+        }
+        return false;
+
+    }
+
+    // moved from GUI
+    public int[] reverseArray(int[] array) {
+        int[] reversed = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            reversed[i] = array[array.length - 1 - i];
+        }
+        return reversed;
     }
 
     // new addition add different cards
@@ -167,10 +180,8 @@ public class Game {
             checkGameOver();
         }
         // new addition
-        //TODO: rework when names are edited for index based
         if (getCurrentPlayer().getIndex() == (players.length - 1)) {
-            round++;
-            System.out.println("round test: " + round);
+            setRound();
         }
     }
 
@@ -332,6 +343,26 @@ public class Game {
 
     //new addition
     public int getRound(){ return round; }
+
+    public Color getTerritoryColor(String abbr){
+        List<Territory> territories = board.getTerritories();
+        for ( Territory territory : territories){
+            if( territory.getAbbr().equals(abbr)){
+                return territory.getColor();
+            }
+        }
+        return new Color(103, 133, 163);
+    }
+
+    public Territory getTerritoryByAbbr(String abbr){
+        List<Territory> territories = board.getTerritories();
+        for (Territory territory : territories){
+            if (territory.getAbbr().equals(abbr)){
+                return territory;
+            }
+        }
+        return null;
+    }
 
     // randomize the players
     public static Player[] createPlayers(String[] playerNames, Color[] playerColors, int numPlayers) {

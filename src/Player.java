@@ -22,16 +22,10 @@ public class Player {
         this.index = 0;
     }
 
-    //new addition
-    public void setArmyCount(){
-        System.out.println("before setrArmyCount: " + armyCount);
-        this.armyCount -= territories.size();
-        System.out.println("after setArmyCount: " + armyCount);
-    }
-
-    public void decreaseArmyCount(int armies) {
-        armyCount -= armies;
-    }
+    //new addition => delete
+    //public void setArmyCount(){
+    //    this.armyCount -= territories.size();
+    //}
 
     public Color getColor() {
         return color;
