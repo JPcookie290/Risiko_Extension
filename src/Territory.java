@@ -12,8 +12,8 @@ public class Territory {
     private boolean neutrality;
     private Color color;
     private String abbr;
-    private boolean firstPanel;
-    private boolean secondPanel;
+    private Coordinate firstPanel;
+    private Coordinate secondPanel;
 
     public Territory(String name, String assignedContinent, String abbr, Color color) {
         this.name = name;
@@ -25,8 +25,8 @@ public class Territory {
         this.assignedContinent = assignedContinent;
         this.color = color;
         this.abbr = abbr;
-        this.firstPanel = true;
-        this.secondPanel = false;
+        this.firstPanel = null;
+        this.secondPanel = null;
     }
 
     public String getName() {
@@ -50,20 +50,20 @@ public class Territory {
         return color;
     }
 
-    public boolean isFirstPanel() {
+    public Coordinate getFirstPanel() {
         return firstPanel;
     }
 
-    public boolean isSecondPanel() {
+    public Coordinate getSecondPanel() {
         return secondPanel;
     }
 
-    public void setFirstPanel() {
-        this.firstPanel = !firstPanel;
+    public void setFirstPanel(int x, int y) {
+        this.firstPanel = new Coordinate(x, y);
     }
 
-    public void setSecondPanel() {
-        this.secondPanel = !secondPanel;
+    public void setSecondPanel(int x, int y) {
+        this.secondPanel = new Coordinate(x, y);
     }
 
     public void removeOwner(Player owner) {

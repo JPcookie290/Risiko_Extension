@@ -214,7 +214,6 @@ public class GUI {
                     //System.out.println(player.getName() + currentPlayerIndex);
                     boolean success = game.distributeArmy(selectedTerritory, armiesToPlace);
                     if (success) {
-                        // TODO change when player is moved
                         game.decreaseArmiesToDistribute(armiesToPlace);
 
                         JOptionPane.showMessageDialog(frame, "You placed " + armiesToPlace + " armies at " + selectedTerritory.getName());
@@ -264,16 +263,28 @@ public class GUI {
                 if(!boardLayout[i][j].isEmpty()){
                     Territory currentTerritory = game.getTerritoryByAbbr(boardLayout[i][j]);
                     territoryLabel.setOpaque(true);
-                    //TODO not working create class coordinate wit two integers, if null set current coordinate
-                    if (currentTerritory.isFirstPanel() && !currentTerritory.getNeutrality()){
-                        territoryColor = currentTerritory.getOwner().getColor();
+
+                    // set first and second panel
+                    if (currentTerritory.getFirstPanel() == null){
+                        currentTerritory.setFirstPanel(i, j);
+                    }
+                    if (currentTerritory.getSecondPanel() == null && currentTerritory.getFirstPanel() != null){
+                        currentTerritory.setSecondPanel(i, j);
+                    }
+
+                    // set text of the first and second panel
+                    if (currentTerritory.getFirstPanel().checkCoordinate(i, j)){
                         territoryLabel.setText(currentTerritory.getAbbr());
-                        currentTerritory.setFirstPanel();
-                        currentTerritory.setSecondPanel();
-                    } else if (currentTerritory.isSecondPanel() && !currentTerritory.getNeutrality()) {
-                        territoryColor = currentTerritory.getOwner().getColor();
+                    }
+                    // check the second panel coordinates
+                    if (currentTerritory.getSecondPanel().checkCoordinate(i, j)) {
                         territoryLabel.setText(String.valueOf(currentTerritory.getArmyCount()));
-                        currentTerritory.setSecondPanel();
+                    }
+
+                    // check to get color if territory is owned for the first and second panel
+                    if ((currentTerritory.getFirstPanel().checkCoordinate(i, j) && !currentTerritory.getNeutrality()) ||
+                            (currentTerritory.getSecondPanel().checkCoordinate(i, j) && !currentTerritory.getNeutrality())){
+                        territoryColor = currentTerritory.getOwner().getColor();
                     } else {
                         territoryColor = game.getTerritoryColor(abbr);
                     }
