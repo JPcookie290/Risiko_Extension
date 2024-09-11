@@ -84,7 +84,8 @@ public class StartUI extends JFrame {
         ButtonGroup mapButtonGroup = new ButtonGroup();
         fantasyWorldButton = new JRadioButton("Fantasy World");
         zamonienButton = new JRadioButton("Zamonien");
-        tamrielButton = new JRadioButton("Tamriel");
+        //tamrielButton = new JRadioButton("Tamriel");
+        tamrielButton = new JRadioButton("Test");
 
         mapButtonGroup.add(fantasyWorldButton);
         mapButtonGroup.add(zamonienButton);
@@ -94,7 +95,8 @@ public class StartUI extends JFrame {
         mapPanel.add(zamonienButton);
         mapPanel.add(tamrielButton);
 
-        fantasyWorldButton.setSelected(true);  // Default selection
+        //fantasyWorldButton.setSelected(true);  // Default selection
+        tamrielButton.setSelected(true);  // Default selection
         mainPanel.add(mapPanel);  // Add map panel to the end
 
         JButton startButton = new JButton("Start Game");
@@ -188,7 +190,8 @@ public class StartUI extends JFrame {
         }
 
         String selectedMap = fantasyWorldButton.isSelected() ? "Fantasy World" :
-                (zamonienButton.isSelected() ? "Zamonien" : "Tamriel");
+                //(zamonienButton.isSelected() ? "Zamonien" : "Tamriel");
+                (zamonienButton.isSelected() ? "Zamonien" : "Test");
 
         // Check if color exists
         // TODO: assign colors if none were chosen

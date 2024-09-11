@@ -24,7 +24,8 @@ public class Game {
         } else if (selectedMap.equals("Zamonien")) {
             this.board = new BoardZamonien();
         } else {
-            this.board = new BoardTamriel();
+            //this.board = new BoardTamriel();
+            this.board = new BoardTest();
         }
 
         this.currentPlayerIndex = 0;
@@ -48,8 +49,12 @@ public class Game {
             System.out.println(player.getName() + " army amount: " + player.getArmyCount());
             totalArmies += player.getArmyCount();
         }
-        System.out.println(totalArmies);
         return totalArmies;
+    }
+
+    private void setArmiesToDistribute(int armies) {
+        this.armiesToDistribute -= armies;
+        System.out.println("setArmiesToDistribute: " + armiesToDistribute);
     }
 
     public void setRound(){ this.round++; }
@@ -58,7 +63,7 @@ public class Game {
 
     public void decreaseArmiesToDistribute(int armies) {
         getCurrentPlayer().removeArmies(armies);
-        calculateArmiesToDistribute();
+        setArmiesToDistribute(armies);
     }
 
     private void initializeGame() {
@@ -128,22 +133,25 @@ public class Game {
 
     public void startDistributingArmies() {
         isDistributing = true;
-        //armiesToDistribute = 16;
+        armiesToDistribute = calculateArmiesToDistribute();
     }
 
+    //TODO not working
     public boolean distributeArmy(Territory territory, int armies) {
         if (!isDistributing || armies <= 0 || armies > armiesToDistribute) {
-            System.out.println("is not distributing" + armies);
+            System.out.println(isDistributing + " " + armies + " " + armiesToDistribute);
             return false;
         }
 
-        Player currentPlayer = getCurrentPlayer();
+        /*Player currentPlayer = getCurrentPlayer();
         if (territory.getOwner() != currentPlayer) {
             System.out.println("gehört ihm nicht" + territory.getOwner().getName() + currentPlayer.getName());
             return false;
-        }
+        }*/
         territory.addArmies(armies);
-        armiesToDistribute -= armies;
+
+        armiesToDistribute = calculateArmiesToDistribute();
+        System.out.println(armiesToDistribute);
 
         if (armiesToDistribute <= 0) {
             isDistributing = false;

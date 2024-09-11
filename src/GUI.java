@@ -1,6 +1,5 @@
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,35 +9,38 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class GUI {
     private final Game game;
     private final JFrame frame;
     private final JPanel boardPanel;
-    private final JLabel statusLabel;
+    //private final JLabel statusLabel;
     private Territory selectedFrom;
     private Territory selectedTo;
     private boolean isFortifying;
     private boolean isDistributing;
     // new addition
+    private boolean isAttacking;
     private JPanel infoPanel;
     private JLabel controlRound;
     private int armiesSelected;
+    private Territory currentSelectedTerritory;
 
     public GUI(Game game) {
         this.game = game;
         this.frame = new JFrame("Risiko: " + game.getBoard().getWorldName() + " Map");
         this.boardPanel = new JPanel();
-        this.statusLabel = new JLabel("Current Player: ");
+        //this.statusLabel = new JLabel("Current Player: ");
         this.selectedFrom = null;
         this.selectedTo = null;
         this.isFortifying = false;
         this.isDistributing = false;
         // additions
+        this.isAttacking = false;
         this.armiesSelected = 0;
         this.infoPanel = new JPanel();
         this.controlRound = new JLabel();
+        this.currentSelectedTerritory = null;
     }
 
     public void start() {
@@ -56,7 +58,7 @@ public class GUI {
         updateBoard();
 
         frame.add(boardPanel, BorderLayout.CENTER);
-        frame.add(statusLabel, BorderLayout.SOUTH);
+        //frame.add(statusLabel, BorderLayout.SOUTH);
 
         JPanel controlPanel = new JPanel();
         controlPanel.add(controlRound);
@@ -137,15 +139,16 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!game.isDistributing()) {
+                    updateBoard(); // TODO check placement
                     game.startDistributingArmies();
                     isDistributing = true;
                     distributeButton.setText("Done");
-                    statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName() + " (Distribute Mode: " + isDistributing + ")");
+                    //statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName() + " (Distribute Mode: " + isDistributing + ")");
                     distributeArmies();
                 } else {
                     isDistributing = false;
                     distributeButton.setText("Distribute Armies");
-                    statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName());
+                    //statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName());
                     updateBoard();
                 }
             }
@@ -159,8 +162,9 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 isFortifying = !isFortifying;
+                updateBoard(); //TODO check placement
                 fortifyButton.setText(isFortifying ? "Attack" : "Fortify");
-                statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName() + " (Fortify Mode: " + isFortifying + ")");
+                //statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName() + " (Fortify Mode: " + isFortifying + ")");
                 isDistributing = false;
             }
         });
@@ -190,34 +194,33 @@ public class GUI {
 
     // eliminated distribution bug
     private void distributeArmies() {
-
-        while (game.getArmiesToDistribute() > 0) {
-            System.out.println(game.getArmiesToDistribute());
-            Player player = game.getCurrentPlayer();
-            Territory selectedTerritory = (Territory) JOptionPane.showInputDialog(
-                    frame,
-                     player.getName() + ", select a territory to place armies:",
-                    "Distribute Armies",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    player.getTerritories().toArray(),
-                    player.getTerritories().get(0)
-            );
-
-            if (selectedTerritory != null) {
+        Player player = game.getCurrentPlayer();
+        if (player.getArmyCount() == 0){
+            game.setCurrentPlayer();
+        } else {
+            if (currentSelectedTerritory != null && currentSelectedTerritory.getOwner().equals(player)) {
                 int armiesToPlace = Integer.parseInt(JOptionPane.showInputDialog(
                         frame,
                         "Enter number of armies to place (1-" + player.getArmyCount() + "):"
                 ));
 
                 if (armiesToPlace >= 1 && armiesToPlace <= player.getArmyCount()) {
-                    //System.out.println(player.getName() + currentPlayerIndex);
-                    boolean success = game.distributeArmy(selectedTerritory, armiesToPlace);
+                    System.out.println(player.getName() + currentSelectedTerritory + armiesToPlace);
+                    game.startDistributingArmies();
+                    boolean success = game.distributeArmy(currentSelectedTerritory, armiesToPlace);
                     if (success) {
                         game.decreaseArmiesToDistribute(armiesToPlace);
 
-                        JOptionPane.showMessageDialog(frame, "You placed " + armiesToPlace + " armies at " + selectedTerritory.getName());
-                        updateBoard();
+                        JOptionPane.showMessageDialog(frame, "You placed " + armiesToPlace + " armies at " + currentSelectedTerritory.getName());
+                        setCurrentSelectedTerritory(null);
+                        isDistributing = false;
+                        if (game.getRound() == 0) {
+                            System.out.println("test, GUI, 218: " + game.getCurrentPlayer().getName());
+                            isDistributing = true;
+                            game.setCurrentPlayer();
+                            System.out.println("test, GUI, 221: " + game.getCurrentPlayer().getName());
+                        }
+                        //updateBoard();
                     } else {
                         JOptionPane.showMessageDialog(frame, "Failed to place armies. Try again.");
                     }
@@ -225,27 +228,51 @@ public class GUI {
                     JOptionPane.showMessageDialog(frame, "Invalid number of armies. Must be between 1 and " + player.getArmyCount() + ".");
                 }
             }
-            //currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-
-            // addition skip player if army count = 0
-            if (game.getNextPlayer(player.getIndex()).getArmyCount() == 0){
-                game.setNextDistributingPlayer(game.getNextPlayer(player.getIndex()));
-            } else {
-                game.setCurrentPlayer();
-            }
 
         }
 
-        JOptionPane.showMessageDialog(frame, "All armies are distributed. The game begins now!");
-        updateBoard();
-        isFortifying = false;
+        if (game.getArmiesToDistribute() == 0 && game.getRound() == 0){
+            game.setRound();
+            isDistributing = false;
+            JOptionPane.showMessageDialog(frame, "All armies are distributed. The game begins now!");
+        }
+
+        //updateBoard();
+
+        //isFortifying = false;
+    }
+
+    private void setCurrentSelectedTerritory(Territory selectedTerritory) {
+        this.currentSelectedTerritory = selectedTerritory;
     }
 
     private void updateBoard() {
         boardPanel.removeAll();
 
-        boardPanel.setLayout(new GridLayout(15,20));
+        boardPanel.setLayout(new GridLayout(game.getBoard().getLayout().length,game.getBoard().getLayout()[1].length));
         boardPanel.setBackground(new Color(175, 222, 234)); // change color for better view
+
+        // create visual signal in which modus the player is currently in
+        Color boardColor = Color.BLACK;
+        String boardModus = "";
+        if (isFortifying){
+            boardColor = Color.BLUE;
+            boardModus = "Modus: Fortifying";
+        } else if (isDistributing){
+            boardColor = Color.YELLOW;
+            boardModus = "Modus: Distributing";
+        } else if (isAttacking){
+            boardColor = Color.RED;
+            boardModus = "Modus: Attacking";
+        }
+
+
+        Border lineBorder = BorderFactory.createLineBorder(boardColor,2);
+        TitledBorder border = BorderFactory.createTitledBorder(lineBorder,boardModus);
+        border.setTitleColor( boardColor );
+        boardPanel.setBorder(border);
+
+
         controlRound.setText("Round: " + game.getRound());
 
         //TODO rework layout, add abbreviation and army display
@@ -267,8 +294,7 @@ public class GUI {
                     // set first and second panel
                     if (currentTerritory.getFirstPanel() == null){
                         currentTerritory.setFirstPanel(i, j);
-                    }
-                    if (currentTerritory.getSecondPanel() == null && currentTerritory.getFirstPanel() != null){
+                    } else if (currentTerritory.getSecondPanel() == null && currentTerritory.getFirstPanel() != null){
                         currentTerritory.setSecondPanel(i, j);
                     }
 
@@ -277,13 +303,13 @@ public class GUI {
                         territoryLabel.setText(currentTerritory.getAbbr());
                     }
                     // check the second panel coordinates
-                    if (currentTerritory.getSecondPanel().checkCoordinate(i, j)) {
+                    if (currentTerritory.getSecondPanel() != null && currentTerritory.getSecondPanel().checkCoordinate(i, j)) {
                         territoryLabel.setText(String.valueOf(currentTerritory.getArmyCount()));
                     }
 
                     // check to get color if territory is owned for the first and second panel
                     if ((currentTerritory.getFirstPanel().checkCoordinate(i, j) && !currentTerritory.getNeutrality()) ||
-                            (currentTerritory.getSecondPanel().checkCoordinate(i, j) && !currentTerritory.getNeutrality())){
+                            (currentTerritory.getSecondPanel() != null && currentTerritory.getSecondPanel().checkCoordinate(i, j) && !currentTerritory.getNeutrality())){
                         territoryColor = currentTerritory.getOwner().getColor();
                     } else {
                         territoryColor = game.getTerritoryColor(abbr);
@@ -322,9 +348,9 @@ public class GUI {
 
         updateInfoPanel();
 
-        statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName() +
-                " | Territories: " + currentPlayer.getTerritories().size() + " | Armies: " + currentPlayer.getArmyCount() +
-                " | Cards: " + currentPlayer.getCards().size());
+        //statusLabel.setText("Current Player: " + game.getCurrentPlayer().getName() +
+        //       " | Territories: " + currentPlayer.getTerritories().size() + " | Armies: " + currentPlayer.getArmyCount() +
+        //      " | Cards: " + currentPlayer.getCards().size());
 
         boardPanel.revalidate();
         boardPanel.repaint();
@@ -335,7 +361,6 @@ public class GUI {
         //}
     }
 
-    // TODO rework
     // Carina
     public void setBorders(int i, int j, String territoryAbbr, JLabel territory, String[][] allMapTiles) {
         // remove any existing border
@@ -415,38 +440,45 @@ public class GUI {
 
     //TODO: rework the events
     private void handleTerritoryClick(String territoryAbbr) {
-        Territory clickedTerritory = game.getTerritoryByAbbr(territoryAbbr);
+        setCurrentSelectedTerritory(game.getTerritoryByAbbr(territoryAbbr));
 
-        if (game.getRound() == 0){
-            if (game.territorySelection(clickedTerritory)){
+        if (game.getRound() == 0 && !isDistributing){
+            if (game.territorySelection(currentSelectedTerritory)){
                 armiesSelected++;
                 // set next player
                 game.setCurrentPlayer();
             } else {
-                JOptionPane.showMessageDialog(frame, clickedTerritory.getName() + " has already been selected. Choose another territory.");
+                JOptionPane.showMessageDialog(frame, currentSelectedTerritory.getName() + " has already been selected. Choose another territory.");
             }
             if (armiesSelected == game.getBoard().getTerritories().size()){
-                game.setRound();
+                setCurrentSelectedTerritory(null);
+                isDistributing = !isDistributing;
             }
             updateBoard();
         }
 
-        /*
-        if (isDistributing) {
-            return;
+
+        if (isDistributing) { //TODO something is not working
+           if (currentSelectedTerritory != null && currentSelectedTerritory.getOwner() == game.getCurrentPlayer()){
+               distributeArmies();
+               updateBoard();
+           }
+            if (currentSelectedTerritory != null && !currentSelectedTerritory.getOwner().equals(game.getCurrentPlayer())) {
+                JOptionPane.showMessageDialog(frame, "You do not own this territory.");
+            }
         }
 
         // TODO rework
-        if (isFortifying && game.getRound() > 0) {
+        /*if (isFortifying && game.getRound() > 0) {
             if (selectedFrom == null) {
-                if (clickedTerritory.getOwner() == game.getCurrentPlayer()) {
-                    selectedFrom = clickedTerritory;
+                if (currentSelectedTerritory.getOwner() == game.getCurrentPlayer()) {
+                    selectedFrom = currentSelectedTerritory;
                     JOptionPane.showMessageDialog(frame, "Territory selected for fortification: " + selectedFrom.getName() + ". Now select the target territory.");
                 } else {
                     JOptionPane.showMessageDialog(frame, "You must select a territory that you own.");
                 }
             } else {
-                selectedTo = clickedTerritory;
+                selectedTo = currentSelectedTerritory;
                 if (!selectedFrom.getAdjacentTerritories().contains(selectedTo)) {
                     JOptionPane.showMessageDialog(frame, "You can only fortify adjacent territories.");
                     return;
@@ -464,14 +496,14 @@ public class GUI {
             }
         } else {
             if (selectedFrom == null) {
-                if (clickedTerritory.getOwner() == game.getCurrentPlayer()) {
-                    selectedFrom = clickedTerritory;
+                if (currentSelectedTerritory.getOwner() == game.getCurrentPlayer()) {
+                    selectedFrom = currentSelectedTerritory;
                     JOptionPane.showMessageDialog(frame, "Territory selected for attack: " + selectedFrom.getName() + ". Now select the target territory.");
                 } else {
                     JOptionPane.showMessageDialog(frame, "You must select a territory that you own.");
                 }
             } else {
-                selectedTo = clickedTerritory;
+                selectedTo = currentSelectedTerritory;
                 if (!selectedFrom.getAdjacentTerritories().contains(selectedTo)) {
                     JOptionPane.showMessageDialog(frame, "You can only attack adjacent territories.");
                     return;
@@ -521,7 +553,7 @@ public class GUI {
             currentPlayer.addArmies(5);
             JOptionPane.showMessageDialog(frame, "You have received 5 additional armies.");
 
-            distributeBonusArmies(currentPlayer, 5);
+            distributeArmies();
             updateBoard();
         }
     }
@@ -614,7 +646,7 @@ public class GUI {
 
     private void distributeBonusArmies(Player player, int armiesToDistribute) {
         while (armiesToDistribute > 0) {
-            Territory selectedTerritory = (Territory) JOptionPane.showInputDialog(
+            /*Territory selectedTerritory = (Territory) JOptionPane.showInputDialog(
                     frame,
                     player.getName() + ", select a territory to place armies:",
                     "Distribute Armies",
@@ -622,19 +654,20 @@ public class GUI {
                     null,
                     player.getTerritories().toArray(),
                     player.getTerritories().get(0)
-            );
+            );*/
 
-            if (selectedTerritory != null) {
+            if (currentSelectedTerritory != null && currentSelectedTerritory.getOwner().equals(player)) {
                 int armiesToPlace = Integer.parseInt(JOptionPane.showInputDialog(
                         frame,
                         "Enter number of armies to place (1-" + armiesToDistribute + "):"
                 ));
 
                 if (armiesToPlace >= 1 && armiesToPlace <= armiesToDistribute) {
-                    boolean success = game.distributeArmy(selectedTerritory, armiesToPlace);
+                    boolean success = game.distributeArmy(currentSelectedTerritory, armiesToPlace);
                     if (success) {
                         armiesToDistribute -= armiesToPlace;
-                        JOptionPane.showMessageDialog(frame, "You placed " + armiesToPlace + " armies at " + selectedTerritory.getName());
+                        JOptionPane.showMessageDialog(frame, "You placed " + armiesToPlace + " armies at " + currentSelectedTerritory.getName());
+                        setCurrentSelectedTerritory(null);
                         updateBoard();
                     } else {
                         JOptionPane.showMessageDialog(frame, "Failed to place armies. Try again.");

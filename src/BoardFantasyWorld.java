@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.List;
 
 public class BoardFantasyWorld extends Board{
 
@@ -9,7 +10,6 @@ public class BoardFantasyWorld extends Board{
         String[] list = new String[]{"Framish Empire", "Commonwealth of Poruntas", "Dominion of Watchhaim", "Diru"};
         createContinents(list);
         createTerritories();
-        setAllAdjacentTerritories();
         String[][] layoutFantansy = new String[][]{
                 {"", "", "", "GYJ", "N", "N", "N", "", "", "", "", "", "SD", "SD", "SD", "AM", "G", "G", "G", "G"},
                 {"", "", "", "GYJ", "N", "N", "N", "TU", "", "", "SD", "SD", "SD", "SD", "SD", "AM", "AM", "G", "G", "G"},
@@ -30,110 +30,63 @@ public class BoardFantasyWorld extends Board{
         setLayout(layoutFantansy);
     }
 
-    // maybe change 3 arrays into one
-    // creates and adds territories to the continents
     public void createTerritories() {
         // Continent Framish Empire
-        String[] continentOneList = new String[]{"Vad", "Meuland", "Tihul", "Tutland", "Noluch", "Golf of Ylvena-Jiku"};
-        String[] continentOneAbbr = new String[] {"V", "ME", "TI", "TU", "N", "GYJ"};
-        Color[] continentOneColor = new Color[]{new Color(100, 166, 101), new Color(161, 186, 92), new Color(107, 128, 44), new Color(84, 174, 20), new Color(76, 128, 44), new Color(110, 165, 73)};
-        for (int i = 0; i < continentOneList.length; i++) {
-            Territory newTerritory = new Territory(continentOneList[i], "Framish Empire", continentOneAbbr[i], continentOneColor[i]);
-            getContinent("Framish Empire").addTerritory(newTerritory);
-            addTerritory(newTerritory);
-        }
-        // old version => rewritten for territory color
-        /*for ( String territoryName : continentOneList ){
-            Territory newTerritory = new Territory(territoryName, "Framish Empire");
-            getContinent("Framish Empire").addTerritory(newTerritory);
-            addTerritory(newTerritory);
-        }*/
+        List<TerritoryInfo> framishEmpireTerritories = List.of(
+                new TerritoryInfo("Vad", "V", new Color(100, 166, 101), List.of("Kingdom of Cleolesbia", "Meuland", "Golf of Ylvena-Jiku")),
+                new TerritoryInfo("Meuland", "ME", new Color(161, 186, 92), List.of("Vad", "Golf of Ylvena-Jiku", "Kingdom of Cleolesbia", "Brampland", "Tihul")),
+                new TerritoryInfo("Tihul", "TI", new Color(107, 128, 44), List.of("Meuland", "Golf of Ylvena-Jiku", "Noluch", "Tutland", "Miama", "Principality of Wickwarn")),
+                new TerritoryInfo("Tutland", "TU", new Color(84, 174, 20), List.of("Tihul", "Noluch", "Miama")),
+                new TerritoryInfo("Noluch", "N", new Color(76, 128, 44), List.of("Golf of Ylvena-Jiku", "Tihul", "Tutland")),
+                new TerritoryInfo("Golf of Ylvena-Jiku", "GYJ", new Color(110, 165, 73), List.of("Vad", "Meuland", "Noluch", "Tihul"))
+        );
+        addTerritoriesToContinent("Framish Empire", framishEmpireTerritories);
+
         // Continent Commonwealth of Poruntas
-        String[] continentTwoList = new String[]{"Kingdom of Cleolesbia", "Brampland", "Principality of Bunteria", "Kingdom of Modh", "Principality of Wickwarn", "Seagela"};
-        String[] continentTwoAbbr = new String[]{"KC", "BRA", "PB", "KM", "PW", "S"};
-        Color[] continentTwoColor = new Color[]{new Color(234, 149, 89), new Color(195, 115, 19), new Color(255, 169, 53), new Color(225, 120, 16), new Color(216, 99, 35), new Color(209, 105, 58)};
-        for (int i = 0; i < continentTwoList.length; i++){
-            Territory newTerritory = new Territory(continentTwoList[i], "Commonwealth of Poruntas", continentTwoAbbr[i], continentTwoColor[i]);
-            getContinent("Commonwealth of Poruntas").addTerritory(newTerritory);
-            addTerritory(newTerritory);
-        }
+        List<TerritoryInfo> poruntasTerritories = List.of(
+                new TerritoryInfo("Kingdom of Cleolesbia", "KC", new Color(234, 149, 89), List.of("Vad", "Meuland", "Brampland", "Seagela")),
+                new TerritoryInfo("Brampland", "BRA", new Color(195, 115, 19), List.of("Kingdom of Cleolesbia", "Seagela", "Principality of Bunteria", "Principality of Wickwarn")),
+                new TerritoryInfo("Principality of Bunteria", "PB", new Color(255, 169, 53), List.of("Seagela", "Brampland", "Kingdom of Modh", "Principality of Wickwarn", "Duchy of Axbria")),
+                new TerritoryInfo("Kingdom of Modh", "KM", new Color(225, 120, 16), List.of("Principality of Bunteria", "Principality of Wickwarn", "Republic of Nird", "Bridford", "Duchy of Axbria")),
+                new TerritoryInfo("Principality of Wickwarn", "PW", new Color(216, 99, 35), List.of("Kingdom of Modh", "Principality of Bunteria", "Brampland", "Meuland", "Tihul", "Miama", "Republic of Nird")),
+                new TerritoryInfo("Seagela", "S", new Color(209, 105, 58), List.of("Kingdom of Cleolesbia", "Brampland", "Principality of Bunteria"))
+        );
+        addTerritoriesToContinent("Commonwealth of Poruntas", poruntasTerritories);
+
         // Continent Dominion of Watchhaim
-        String[] continentThreeList = new String[]{"Grantria", "Harland", "Selfan Districts", "Alcesbruian Mountains", "Miama", "Lonanese Theocracy" };
-        String[] continentThreeAbbr = new String[]{"G", "H", "SD", "AM", "MI", "LT"};
-        Color[] continentThreeColor = new Color[]{new Color(108, 74, 149), new Color(98, 19, 195), new Color(154, 101, 216), new Color(86, 36, 154), new Color(100, 79, 131), new Color(144, 66, 241)};
-        for (int i = 0; i < continentThreeList.length; i++){
-            Territory newTerritory = new Territory(continentThreeList[i], "Dominion of Watchhaim", continentThreeAbbr[i], continentThreeColor[i]);
-            getContinent("Dominion of Watchhaim").addTerritory(newTerritory);
-            addTerritory(newTerritory);
-        }
+        List<TerritoryInfo> watchhaimTerritories = List.of(
+                new TerritoryInfo("Grantria", "G", new Color(108, 74, 149), List.of("Alcesbruian Mountains", "Lonanese Theocracy")),
+                new TerritoryInfo("Harland", "H", new Color(98, 19, 195), List.of("Miama", "Selfan Districts", "Alcesbruian Mountains", "Kingdom of Geumguk", "Berja")),
+                new TerritoryInfo("Selfan Districts", "SD", new Color(154, 101, 216), List.of("Miama", "Harland", "Alcesbruian Mountains")),
+                new TerritoryInfo("Alcesbruian Mountains", "AM", new Color(86, 36, 154), List.of("Grantria", "Selfan Districts", "Harland", "Lonanese Theocracy", "Kingdom of Geumguk")),
+                new TerritoryInfo("Miama", "MI", new Color(100, 79, 131), List.of("Selfan Districts", "Harland", "Tutland", "Tihul", "Principality of Wickwarn", "Republic of Nird", "Berja")),
+                new TerritoryInfo("Lonanese Theocracy", "LT", new Color(144, 66, 241), List.of("Grantria", "Alcesbruian Mountains", "Kingdom of Geumguk"))
+        );
+        addTerritoriesToContinent("Dominion of Watchhaim", watchhaimTerritories);
+
         // Continent Diru
-        String[] continentFourList = new String[]{"Republic of Nird", "Midbury Empire", "Kingdom of Geumguk", "Berja", "Duchy of Axbria", "Bridford"};
-        String[] continentFourAbbr = new String[]{"RN", "EM", "KG", "BE", "DA", "BRI"};
-        Color[] continentFourColor = new Color[]{new Color(251, 255, 90), new Color(197, 198, 69), new Color(252, 255, 5), new Color(255, 242, 104), new Color(255, 227, 42), new Color(255, 221, 0)};
-        for (int i = 0; i < continentFourList.length; i++){
-            Territory newTerritory = new Territory(continentFourList[i], "Diru", continentFourAbbr [i], continentFourColor[i]);
-            getContinent("Diru").addTerritory(newTerritory);
+        List<TerritoryInfo> diruTerritories = List.of(
+                new TerritoryInfo("Republic of Nird", "RN", new Color(251, 255, 90), List.of("Kingdom of Modh", "Principality of Wickwarn", "Miama", "Berja", "Bridford")),
+                new TerritoryInfo("Midbury Empire", "EM", new Color(197, 198, 69), List.of("Duchy of Axbria", "Bridford", "Kingdom of Geumguk")),
+                new TerritoryInfo("Kingdom of Geumguk", "KG", new Color(252, 255, 5), List.of("Midbury Empire", "Bridford", "Berja", "Harland", "Alcesbruian Mountains", "Lonanese Theocracy")),
+                new TerritoryInfo("Berja", "BE", new Color(255, 242, 104), List.of("Kingdom of Geumguk", "Republic of Nird", "Miama", "Harland", "Bridford")),
+                new TerritoryInfo("Duchy of Axbria", "DA", new Color(255, 227, 42), List.of("Midbury Empire", "Bridford", "Kingdom of Modh", "Principality of Bunteria")),
+                new TerritoryInfo("Bridford", "BRI", new Color(255, 221, 0), List.of("Midbury Empire", "Duchy of Axbria", "Kingdom of Modh", "Republic of Nird", "Berja", "Kingdom of Geumguk"))
+        );
+        addTerritoriesToContinent("Diru", diruTerritories);
+    }
+
+    // Helper method to add territories to a continent
+    private void addTerritoriesToContinent(String continentName, List<TerritoryInfo> territoryInfos) {
+        for (TerritoryInfo info : territoryInfos) {
+            Territory newTerritory = new Territory(info.getName(), continentName, info.getAbbreviation(), info.getTerritoryColor());
+            getContinent(continentName).addTerritory(newTerritory);
             addTerritory(newTerritory);
+
+            // Set adjacent territories
+            setAdjacentTerritories(info.getName(), info.getAdjacentTerritories().toArray(new String[0]));
         }
     }
 
-    // Function to add the adjacent territories
-    private void setAllAdjacentTerritories(){
 
-        /* --- Framish Empire --- */
-        // Vad
-        setAdjacentTerritories("Vad", new String[]{"Kingdom of Cleolesbia", "Meuland", "Golf of Ylvena-Jiku"});
-        // Meuland
-        setAdjacentTerritories("Meuland", new String[]{"Vad", "Golf of Ylvena-Jiku", "Kingdom of Cleolesbia", "Brampland", "Tihul"});
-        // Tihul
-        setAdjacentTerritories("Tihul", new String[]{"Meuland", "Golf of Ylvena-Jiku", "Noluch", "Tutland", "Miama", "Principality of Wickwarn"});
-        // Tutland
-        setAdjacentTerritories("Tutland", new String[]{"Tihul", "Noluch", "Miama"});
-        // Noluch
-        setAdjacentTerritories("Noluch", new String[]{"Golf of Ylvena-Jiku", "Tihul", "Tutland"});
-        // Golf of Ylvena-Jiku
-        setAdjacentTerritories("Golf of Ylvena-Jiku", new String[]{"Vad", "Meuland", "Noluch", "Tihul"});
-
-        /* --- Commonwealth of Poruntas --- */
-        // Kingdom of Cleolesbia
-        setAdjacentTerritories("Kingdom of Cleolesbia", new String[]{"Vad", "Meuland", "Brampland", "Seagela"});
-        // Brampland
-        setAdjacentTerritories("Brampland", new String[]{"Brampland", "Kingdom of Cleolesbia", "Seagela", "Principality of Bunteria", "Principality of Wickwarn"});
-        // Principality of Bunteria
-        setAdjacentTerritories("Principality of Bunteria", new String[]{"Seagela", "Brampland", "Kingdom of Modh", "Principality of Wickwarn", "Duchy of Axbria"});
-        // Kingdom of Modh
-        setAdjacentTerritories("Kingdom of Modh", new String[]{"Principality of Bunteria", "Principality of Wickwarn", "Republic of Nird", "Bridford", "Duchy of Axbria"});
-        // Principality of Wickwarn
-        setAdjacentTerritories("Principality of Wickwarn", new String[]{"Kingdom of Modh", "Principality of Bunteria", "Brampland", "Meuland", "Tihul", "Miama", "Republic of Nird"});
-        // Seagela
-        setAdjacentTerritories("Seagela", new String[]{"Kingdom of Cleolesbia", "Brampland", "Principality of Bunteria"});
-
-        /* --- Dominion of Watchhaim --- */
-        // Grantria
-        setAdjacentTerritories("Grantria", new String[]{"Alcesbruian Mountains", "Lonanese Theocracy"});
-        // Harland
-        setAdjacentTerritories("Harland", new String[]{"Miama", "Selfan Districts", "Alcesbruian Mountains", "Kingdom of Geumguk", "Berja"});
-        // Selfan Districts
-        setAdjacentTerritories("Selfan Districts", new String[]{"Miama", "Harland", "Alcesbruian Mountains"});
-        // Alcesbruian Mountains
-        setAdjacentTerritories("Alcesbruian Mountains", new String[]{"Grantria", "Selfan Districts", "Harland", "Lonanese Theocracy", "Kingdom of Geumguk"});
-        // Miama
-        setAdjacentTerritories("Miama", new String[]{"Selfan Districts", "Harland", "Tutland", "Tihul", "Principality of Wickwarn", "Republic of Nird", "Berja"});
-        // Lonanese Theocracy
-        setAdjacentTerritories("Lonanese Theocracy", new String[]{"Grantria", "Alcesbruian Mountains", "Kingdom of Geumguk"});
-
-        /* --- Diru --- */
-        // Republic of Nird
-        setAdjacentTerritories("Republic of Nird", new String[]{"Kingdom of Modh", "Principality of Wickwarn", "Miama", "Berja", "Bridford"});
-        // Midbury Empire
-        setAdjacentTerritories("Midbury Empire", new String[]{"Duchy of Axbria", "Bridford", "Kingdom of Geumguk"});
-        // Kingdom of Geumguk
-        setAdjacentTerritories("Kingdom of Geumguk", new String[]{"Midbury Empire", "Bridford", "Berja", "Harland", "Alcesbruian Mountains", "Lonanese Theocracy"});
-        // Berja
-        setAdjacentTerritories("Berja", new String[]{"Kingdom of Geumguk", "Republic of Nird", "Miama", "Harland", "Bridford"});
-        // Duchy of Axbria
-        setAdjacentTerritories("Duchy of Axbria", new String[]{"Midbury Empire", "Bridford", "Kingdom of Modh", "Principality of Bunteria"});
-        // Bridford
-        setAdjacentTerritories("Bridford", new String[]{"Midbury Empire", "Duchy of Axbria", "Kingdom of Modh","Republic of Nird", "Berja", "Kingdom of Geumguk"});
-    }
 }
