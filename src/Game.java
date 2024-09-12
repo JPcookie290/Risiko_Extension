@@ -39,6 +39,7 @@ public class Game {
 
 
         //this.board.outputControl(); // -> to delete
+        System.out.println(getTerritoriesToSelectAmount());
         initializeGame();
     }
 
@@ -52,9 +53,16 @@ public class Game {
         return totalArmies;
     }
 
+    // function to get the amount of territories each player can choose
+    public int getTerritoriesToSelectAmount() {
+        return board.territoriesLength() / players.length;
+    }
+
     private void setArmiesToDistribute(int armies) {
         this.armiesToDistribute -= armies;
-        System.out.println("setArmiesToDistribute: " + armiesToDistribute);
+        if(armiesToDistribute <= 0){
+            isDistributing = false;
+        }
     }
 
     public void setRound(){ this.round++; }
@@ -67,12 +75,10 @@ public class Game {
     }
 
     private void initializeGame() {
-        List<Territory> allTerritories = new ArrayList<>(board.getTerritories());
 
         for (Player player : players) {
             playerCards.put(player, new ArrayList<>());
         }
-
 
         // removed code because of player selection of the territories
 
@@ -122,6 +128,13 @@ public class Game {
         return cards;
     }
 
+    // new addition
+    public Card getRandomCard(){
+        int randomIndex = random.nextInt(allCards.size());
+        Card randomCard = allCards.get(randomIndex);
+        allCards.remove(randomIndex);
+        return randomCard;
+    }
 
     public Player[] getPlayers() {
         return players;
@@ -136,27 +149,14 @@ public class Game {
         armiesToDistribute = calculateArmiesToDistribute();
     }
 
-    //TODO not working
     public boolean distributeArmy(Territory territory, int armies) {
         if (!isDistributing || armies <= 0 || armies > armiesToDistribute) {
-            System.out.println(isDistributing + " " + armies + " " + armiesToDistribute);
             return false;
         }
-
-        /*Player currentPlayer = getCurrentPlayer();
-        if (territory.getOwner() != currentPlayer) {
-            System.out.println("gehört ihm nicht" + territory.getOwner().getName() + currentPlayer.getName());
-            return false;
-        }*/
+        // removed code that became redundant
         territory.addArmies(armies);
 
         armiesToDistribute = calculateArmiesToDistribute();
-        System.out.println(armiesToDistribute);
-
-        if (armiesToDistribute <= 0) {
-            isDistributing = false;
-            return true;
-        }
 
         return true;
     }
@@ -169,22 +169,16 @@ public class Game {
         return players[currentPlayerIndex];
     }
 
-    // new addition
-    public Player getNextPlayer(int currentPlayerIndex) {
-        if( players[players.length - 1].getIndex() == currentPlayerIndex){
-            return players[0];
-        } else {
-            return players[currentPlayerIndex + 1];
-        }
-    }
+    // new addition => delete
 
     public void nextTurn() {
         if (!isDistributing) {
+            //TODO check
+            setCurrentPlayer();
             reinforcePhase();
             cardReinforcementPhase();
             attackPhase();
             fortifyPhase();
-            setCurrentPlayer();
             checkGameOver();
         }
         // new addition
@@ -193,15 +187,6 @@ public class Game {
         }
     }
 
-    //TODO rework
-    public void setNextDistributingPlayer(Player nextPlayer){
-        int index = nextPlayer.getIndex();
-        if (index == players.length - 1){
-            currentPlayerIndex = 0;
-        } else {
-            currentPlayerIndex = index + 1;
-        }
-    }
 
     public void setCurrentPlayer(){
         currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
@@ -261,11 +246,7 @@ public class Game {
         }
         if (territoryConquered) {
             // addition choose a random card & remove it from the list
-            int cardIndex = random.nextInt(allCards.size());
-            Card newPlayerCard = allCards.get(cardIndex);
-            allCards.remove(cardIndex);
-
-            playerCards.get(currentPlayer).add(newPlayerCard);
+            playerCards.get(currentPlayer).add(getRandomCard());
 
             if (playerCards.get(currentPlayer).size() > 5) {
                 cardReinforcementPhase();
@@ -288,6 +269,7 @@ public class Game {
         }
     }
 
+    //TODO check
     public void attackTerritory(Territory from, Territory to, int attackArmies, int defendArmies) {
         if (from.getOwner() == getCurrentPlayer() && to.getOwner() != getCurrentPlayer()) {
             int[] attackDice = rollDice(attackArmies);
@@ -395,5 +377,26 @@ public class Game {
         }
         return newOrder;
     }
+
+    public String addCardsBack(String type) {
+        if (type.equals("One of Each")) {
+            allCards.add(new Card("Infantry"));
+            allCards.add(new Card("Cavalry"));
+            allCards.add(new Card("Artillery"));
+        } else {
+            for (int i = 0; i < 3; i++) {
+                allCards.add(new Card(type));
+            }
+        }
+
+        Collections.shuffle(allCards);
+
+        return switch (type) {
+            case "Infantry" -> "You have received 4 additional armies.";
+            case "Artillery" -> "You have received 6 additional armies.";
+            default -> "You have received 5 additional armies."; // for "Cavalry" and "One of Each"
+        };
+    }
+
 
 }

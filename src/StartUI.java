@@ -2,10 +2,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.function.Predicate;
 
 public class StartUI extends JFrame {
 
-    private JPanel mainPanel;
     private JTextField[] playerNameFields;
     private Color[] selectedColors;
     private JRadioButton twoPlayersButton, threePlayersButton, fourPlayersButton;
@@ -26,7 +27,7 @@ public class StartUI extends JFrame {
         setSize(600, 400);
         setLayout(new BorderLayout());
 
-        mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setAlignmentX(Component.CENTER_ALIGNMENT);  // Center the main panel
 
@@ -193,8 +194,18 @@ public class StartUI extends JFrame {
                 //(zamonienButton.isSelected() ? "Zamonien" : "Tamriel");
                 (zamonienButton.isSelected() ? "Zamonien" : "Test");
 
-        // Check if color exists
-        // TODO: assign colors if none were chosen
+        // Check if colors are chosen, if not auto assign
+        for (int i = 0; i < numPlayers; i++) {
+            if (selectedColors[i] == null) {
+                for (int j = 0; j < preselectedColors.length; j++) {
+                    if (!isColorChosen[j]) {
+                        selectedColors[i] = preselectedColors[j];
+                        isColorChosen[j] = true;
+                        break;
+                    }
+                }
+            }
+        }
 
         // Print info
         printGameInfo(numPlayers, playerNames, selectedColors, selectedMap);

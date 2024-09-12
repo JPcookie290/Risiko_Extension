@@ -109,4 +109,20 @@ public class Board {
             }
         }
     }
+
+    // To add territories to a continent
+    public void addTerritoriesToContinent(List<TerritoryInfo> territoryInfos) {
+        for (TerritoryInfo info : territoryInfos) {
+            Territory newTerritory = new Territory(info.getName(), info.getContinent(), info.getAbbreviation(), info.getTerritoryColor());
+            getContinent(info.getContinent()).addTerritory(newTerritory);
+            addTerritory(newTerritory);
+        }
+    }
+
+    // Set adjacent territories
+    public void setAllAdjacentTerritories(List<TerritoryInfo> territoryInfos) {
+        for (TerritoryInfo info : territoryInfos) {
+            setAdjacentTerritories(info.getName(), info.getAdjacentTerritories().toArray(new String[0]));
+        }
+    }
 }
