@@ -14,7 +14,15 @@ public class StartUI extends JFrame {
     private StartUIListener listener;
     private JLabel[][] colorLabelsForPlayers;
     private boolean[] isColorChosen;
-    private Color[] preselectedColors = {Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.MAGENTA};
+    private Color[] preselectedColors = {
+            new Color(102, 0, 0),    // Red
+            new Color(0, 70, 0),     // Green
+            new Color(55, 0, 100),   // Violet
+            new Color(75, 50, 25),   // Brown
+            new Color(153, 76, 0),   // Orange
+            new Color(102, 0, 102)   // Magenta
+    };
+
     private JPanel playerInputPanel;
     private JPanel mapPanel;
     private int[] previousColorIndex;
@@ -85,8 +93,8 @@ public class StartUI extends JFrame {
         ButtonGroup mapButtonGroup = new ButtonGroup();
         fantasyWorldButton = new JRadioButton("Fantasy World");
         zamonienButton = new JRadioButton("Zamonien");
-        //tamrielButton = new JRadioButton("Tamriel");
-        tamrielButton = new JRadioButton("Test");
+        tamrielButton = new JRadioButton("Tamriel");
+        //tamrielButton = new JRadioButton("Test");
 
         mapButtonGroup.add(fantasyWorldButton);
         mapButtonGroup.add(zamonienButton);
@@ -96,8 +104,8 @@ public class StartUI extends JFrame {
         mapPanel.add(zamonienButton);
         mapPanel.add(tamrielButton);
 
-        //fantasyWorldButton.setSelected(true);  // Default selection
-        tamrielButton.setSelected(true);  // Default selection
+        fantasyWorldButton.setSelected(true);  // Default selection
+        //tamrielButton.setSelected(true);  // Default selection
         mainPanel.add(mapPanel);  // Add map panel to the end
 
         JButton startButton = new JButton("Start Game");
@@ -191,8 +199,8 @@ public class StartUI extends JFrame {
         }
 
         String selectedMap = fantasyWorldButton.isSelected() ? "Fantasy World" :
-                //(zamonienButton.isSelected() ? "Zamonien" : "Tamriel");
-                (zamonienButton.isSelected() ? "Zamonien" : "Test");
+                (zamonienButton.isSelected() ? "Zamonien" : "Tamriel");
+                //(zamonienButton.isSelected() ? "Zamonien" : "Test");
 
         // Check if colors are chosen, if not auto assign
         for (int i = 0; i < numPlayers; i++) {
@@ -226,12 +234,12 @@ public class StartUI extends JFrame {
     }
 
     private String getColorName(Color color) {
-        if (color.equals(Color.RED)) return "Red";
-        if (color.equals(Color.BLUE)) return "Blue";
-        if (color.equals(Color.GREEN)) return "Green";
-        if (color.equals(Color.YELLOW)) return "Yellow";
-        if (color.equals(Color.ORANGE)) return "Orange";
-        if (color.equals(Color.MAGENTA)) return "Magenta";
+        if (color.equals(new Color(102, 0, 0))) return "Red";
+        if (color.equals(new Color(0, 70, 0))) return "Green";
+        if (color.equals(new Color(55, 0, 100))) return "Violet";
+        if (color.equals(new Color(75, 50, 25))) return "Brown";
+        if (color.equals(new Color(153, 76, 0))) return "Orange";
+        if (color.equals(new Color(102, 0, 102))) return "Magenta";
         return "Unknown Color";
     }
 }

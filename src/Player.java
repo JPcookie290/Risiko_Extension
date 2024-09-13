@@ -13,6 +13,7 @@ public class Player {
     private Color color;
     private int index;
     private boolean threeCardsType;
+    private WinCondition winCondition;
 
     public Player(String name, Color color, int armyCount) {
         this.name = name;
@@ -146,6 +147,18 @@ public class Player {
 
     public int getIndex() {
         return index;
+    }
+
+    public void setWinCondition(WinCondition winCondition) {
+        this.winCondition = winCondition;
+    }
+
+    public WinCondition getWinCondition() {
+        return winCondition;
+    }
+
+    public boolean checkWin(){
+        return winCondition.getConditionMet();
     }
 
     // testing output

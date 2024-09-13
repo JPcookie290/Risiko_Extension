@@ -24,8 +24,8 @@ public class Game {
         } else if (selectedMap.equals("Zamonien")) {
             this.board = new BoardZamonien();
         } else {
-            //this.board = new BoardTamriel();
-            this.board = new BoardTest();
+            this.board = new BoardTamriel();
+            //this.board = new BoardTest();
         }
 
         this.currentPlayerIndex = 0;
@@ -38,8 +38,7 @@ public class Game {
         this.round = 0;
 
 
-        //this.board.outputControl(); // -> to delete
-        System.out.println(getTerritoriesToSelectAmount());
+        this.board.outputControl(); // -> to delete
         initializeGame();
     }
 
@@ -55,6 +54,10 @@ public class Game {
 
     // function to get the amount of territories each player can choose
     public int getTerritoriesToSelectAmount() {
+        if (board.getWorldName().equals("Tamriel")){
+            // TODO Check
+            return (board.territoriesLength() - 1) / players.length;
+        }
         return board.territoriesLength() / players.length;
     }
 
@@ -81,6 +84,7 @@ public class Game {
         }
 
         // removed code because of player selection of the territories
+        setWinConditions();
 
         // add different cards
         allCards = getCards();
@@ -176,13 +180,14 @@ public class Game {
             //TODO check
             setCurrentPlayer();
             reinforcePhase();
-            cardReinforcementPhase();
-            attackPhase();
-            fortifyPhase();
+            //cardReinforcementPhase();
+            //attackPhase();
+            //fortifyPhase();
             checkGameOver();
         }
         // new addition
         if (getCurrentPlayer().getIndex() == (players.length - 1)) {
+            System.out.println("Test Game, 186: last player: " + players[players.length - 1].getName() + ", current player: " + getCurrentPlayer().getName());
             setRound();
         }
     }
@@ -312,6 +317,7 @@ public class Game {
             from.removeArmies(armiesToMove);
             to.addArmies(armiesToMove);
         }
+
     }
 
     public boolean isGameOver() {
@@ -376,6 +382,15 @@ public class Game {
             newOrder[i].setIndex(i);
         }
         return newOrder;
+    }
+
+    private void setWinConditions(){
+        List<WinCondition> conditions = board.getWinConditions(board.getWorldName());
+        int randomIndex = random.nextInt(conditions.size());
+        for (Player player : players){
+            player.setWinCondition(conditions.get(randomIndex));
+        }
+
     }
 
     public String addCardsBack(String type) {

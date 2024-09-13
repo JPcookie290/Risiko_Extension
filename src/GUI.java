@@ -91,7 +91,7 @@ public class GUI {
         Player player = game.getCurrentPlayer();
 
         infoPanel.removeAll();
-        infoPanel.setLayout(new GridLayout(3,2));
+        infoPanel.setLayout(new GridLayout(4,2));
 
         Border lineBorder = BorderFactory.createLineBorder(player.getColor(),2);
         TitledBorder border = BorderFactory.createTitledBorder(lineBorder, player.getName());
@@ -115,6 +115,10 @@ public class GUI {
             territories.append(card.getType()).append(", ");
         }
         JLabel cardList = new JLabel(String.valueOf(cards));
+        // Win condition
+        JLabel mission = new JLabel("Your mission:");
+        JLabel missionText = new JLabel(game.getCurrentPlayer().getWinCondition().getText());
+
         // add to infoPanel
         infoPanel.add(labelTerritories);
         infoPanel.add(territoriesList);
@@ -122,6 +126,8 @@ public class GUI {
         infoPanel.add(armyAmount);
         infoPanel.add(labelCards);
         infoPanel.add(cardList);
+        infoPanel.add(mission);
+        infoPanel.add(missionText);
     }
 
     // removes Buttons from createAndShowGUI() and create their own functions
@@ -151,12 +157,16 @@ public class GUI {
                     attackButton.setText("Done");
                     if (isFortifying){
                         isFortifying = false;
+                        selectedFrom = null;
+                        selectedTo = null;
                         fortifyButton.setText("Fortify");
                     }
                     isAttacking = true;
                     updateBoard();
                 } else {
                     isAttacking = false;
+                    selectedTo = null;
+                    selectedFrom = null;
                     attackButton.setText("Attack");
                     updateBoard();
                 }
@@ -177,12 +187,16 @@ public class GUI {
                     fortifyButton.setText("Done");
                     if (isAttacking){
                         isAttacking = false;
+                        selectedFrom = null;
+                        selectedTo = null;
                         attackButton.setText("Attack");
                     }
                     isFortifying = true;
                     updateBoard();
                 } else {
                     isFortifying = false;
+                    selectedFrom = null;
+                    selectedTo = null;
                     fortifyButton.setText("Fortify");
                     updateBoard();
                 }
@@ -199,12 +213,11 @@ public class GUI {
                     JOptionPane.showMessageDialog(frame, "Distributing phase is not finished yet.");
                 } else {
                     // TODO check
+                    fortifyButton.setEnabled(true);
                     game.nextTurn();
                     if (game.getCurrentPlayer().getArmyCount() > 0){
                         isDistributing = true;
                     }
-                    fortifyButton.setEnabled(true);
-
                     if (game.checkWinCondition()) {
                         JOptionPane.showMessageDialog(frame, "Player " + game.getCurrentPlayer().getName() + " wins!");
                         System.exit(0);
@@ -269,10 +282,10 @@ public class GUI {
         boardPanel.removeAll();
 
         boardPanel.setLayout(new GridLayout(game.getBoard().getLayout().length,game.getBoard().getLayout()[1].length));
-        boardPanel.setBackground(new Color(175, 222, 234)); // change color for better view
+        boardPanel.setBackground(new Color(14, 68, 108)); // change color for better view
 
         // create visual signal in which modus the player is currently in
-        Color boardColor = Color.BLACK;
+        Color boardColor = Color.WHITE;
         String boardModus = "you can either fortify or attack";
         if (isInitialRound){
             boardModus = game.getCurrentPlayer().getName() + " choose a territory";
@@ -282,16 +295,16 @@ public class GUI {
             boardModus = "you can either fortify, attack or exchange cards";
         }
         if (isFortifying){
-            boardColor = Color.BLUE;
+            boardColor = new Color(128, 227, 153);
             boardModus = "Modus: Fortifying";
             if (selectedFrom != null){
                 boardModus += " | Starting territory: " + selectedFrom.getName();
             }
         } else if (isDistributing){
-            boardColor = Color.YELLOW;
+            boardColor = new Color(223, 216, 133);
             boardModus = "Modus: Distributing";
         } else if (isAttacking){
-            boardColor = Color.RED;
+            boardColor = new Color(227, 128, 128);
             boardModus = "Modus: Attacking";
             if (selectedFrom != null){
                 boardModus += " | Starting territory: " + selectedFrom.getName();
@@ -337,6 +350,7 @@ public class GUI {
                     if ((currentTerritory.getFirstPanel().checkCoordinate(i, j) && !currentTerritory.getNeutrality()) ||
                             (currentTerritory.getSecondPanel() != null && currentTerritory.getSecondPanel().checkCoordinate(i, j) && !currentTerritory.getNeutrality())){
                         territoryColor = currentTerritory.getOwner().getColor();
+                        territoryLabel.setForeground(Color.white);
                     } else {
                         territoryColor = game.getTerritoryColor(abbr);
                     }
@@ -471,6 +485,11 @@ public class GUI {
         setCurrentSelectedTerritory(game.getTerritoryByAbbr(territoryAbbr));
 
         if (isInitialRound && !isDistributing){
+            // Hard coded for Tamriel Board
+            if (currentSelectedTerritory.getAbbr().equals("CY")){
+                JOptionPane.showMessageDialog(frame, currentSelectedTerritory.getName() + " can not be selected at the beginning. Choose another territory.");
+                return;
+            }
             if (game.territorySelection(currentSelectedTerritory)){
                 armiesSelected++;
                 // set next player
@@ -552,7 +571,13 @@ public class GUI {
                     JOptionPane.showMessageDialog(frame, "You cannot attack your own territory.");
                     return;
                 }
-                System.out.println(selectedFrom.getName() + selectedTo.getName());
+                // For Tamriel Board
+                if (game.getBoard().getWorldName().equals("Tamriel") && !game.getBoard().isCyrodillAttackable(game.getCurrentPlayer())){
+                    JOptionPane.showMessageDialog(frame, "You are not yet qualified to attack Cyrodill.");
+                    return;
+                }
+
+                //System.out.println(selectedFrom.getName() + selectedTo.getName());
                 int attackArmies = Integer.parseInt(JOptionPane.showInputDialog(frame, "Enter number of armies to attack with (1-3):"));
                 if (attackArmies >= 1 && attackArmies <= 3 && attackArmies <= selectedFrom.getArmyCount() - 1) {
                     int defendArmies = Math.min(2, selectedTo.getArmyCount());
@@ -626,7 +651,7 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 diceFrame.dispose();
-                game.nextTurn();
+                //game.nextTurn();
                 if (game.checkWinCondition()) {
                     JOptionPane.showMessageDialog(frame, "Player " + game.getCurrentPlayer().getName() + " wins!");
                     System.exit(0);

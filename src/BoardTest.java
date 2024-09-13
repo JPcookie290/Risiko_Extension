@@ -17,6 +17,7 @@ public class BoardTest extends Board {
                 {"H", "H", "H", "E", "F", "F"},
 
         };
+
         setLayout(layoutFantansy);
     }
 
@@ -38,11 +39,8 @@ public class BoardTest extends Board {
                 new TerritoryInfo("Territory F", "F", new Color(115, 175, 58), List.of("Territory B", "Territory E"), "Continent 4")
         );
 
-
         addTerritoriesToContinent(territories);
         setAllAdjacentTerritories(territories);
     }
-
-
 }
 

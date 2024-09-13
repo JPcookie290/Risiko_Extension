@@ -10,8 +10,8 @@ public class Territory {
     // new additions
     private String assignedContinent;
     private boolean neutrality;
-    private Color color;
-    private String abbr;
+    private final Color color;
+    private final String abbr;
     private Coordinate firstPanel;
     private Coordinate secondPanel;
 
@@ -66,10 +66,9 @@ public class Territory {
         this.secondPanel = new Coordinate(x, y);
     }
 
-    public void removeOwner(Player owner) {
-        if (armyCount == 0){
+    public void removeOwner() {
             setOwner(null);
-        }
+            this.neutrality = true;
     }
 
     public void setAssignedContinent(String continent){
@@ -100,6 +99,9 @@ public class Territory {
 
     public void removeArmies(int count) {
         this.armyCount -= count;;
+        if (this.armyCount <= 0){
+            removeOwner();
+        }
     }
 
     public List<Territory> getAdjacentTerritories() {
