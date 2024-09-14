@@ -386,8 +386,9 @@ public class Game {
 
     private void setWinConditions(){
         List<WinCondition> conditions = board.getWinConditions(board.getWorldName());
-        int randomIndex = random.nextInt(conditions.size());
+       
         for (Player player : players){
+            int randomIndex = random.nextInt(conditions.size());
             player.setWinCondition(conditions.get(randomIndex));
         }
 
